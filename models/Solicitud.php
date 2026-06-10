@@ -88,6 +88,25 @@ class Solicitud {
     }
 
     /**
+ * Obtener solicitudes pendientes (admin)
+ */
+public function obtenerPendientes() {
+
+    $sql = "SELECT s.*,
+                   u.nombre AS cliente_nombre,
+                   u.apellido AS cliente_apellido,
+                   i.titulo AS inmueble_titulo
+            FROM Solicitudes s
+            INNER JOIN Usuarios u
+                ON s.idCliente = u.idUsuario
+            INNER JOIN Inmuebles i
+                ON s.idInmueble = i.idInmueble
+            WHERE s.estado = 'pendiente'
+            ORDER BY s.fecha DESC";
+
+    return $this->db->select($sql);
+}
+    /**
      * Contar solicitudes pendientes recibidas
      */
     public function contarPendientes($usuarioId) {
@@ -103,32 +122,39 @@ class Solicitud {
      * Listar todas las solicitudes (admin)
      */
     public function listarTodas($filtros = []) {
-        $sql = "SELECT s.*, 
-                i.titulo as inmueble_titulo,
-                c.nombre as cliente_nombre, c.apellido as cliente_apellido,
-                p.nombre as publicador_nombre, p.apellido as publicador_apellido
-                FROM solicitudes s
-                JOIN inmuebles i ON s.inmueble_id = i.id
-                JOIN usuarios c ON s.cliente_id = c.id
-                JOIN usuarios p ON i.usuario_id = p.id
-                WHERE 1=1";
-        $params = [];
-        $tipos = "";
 
-        if (!empty($filtros['estado'])) {
-            $sql .= " AND s.estado = ?";
-            $params[] = $filtros['estado'];
-            $tipos .= "s";
-        }
+    $sql = "SELECT s.*,
+                   i.titulo AS inmueble_titulo,
+                   c.nombre AS cliente_nombre,
+                   c.apellido AS cliente_apellido,
+                   p.nombre AS publicador_nombre,
+                   p.apellido AS publicador_apellido
+            FROM Solicitudes s
+            INNER JOIN Inmuebles i
+                ON s.idInmueble = i.idInmueble
+            INNER JOIN Usuarios c
+                ON s.idCliente = c.idUsuario
+            INNER JOIN Usuarios p
+                ON i.idPublicador = p.idUsuario
+            WHERE 1=1";
 
-        $sql .= " ORDER BY s.fecha_solicitud DESC";
+    $params = [];
+    $tipos = "";
 
-        if (!empty($filtros['limite'])) {
-            $sql .= " LIMIT " . (int)$filtros['limite'];
-        }
-
-        return $this->db->select($sql, $params, $tipos);
+    if (!empty($filtros['estado'])) {
+        $sql .= " AND s.estado = ?";
+        $params[] = $filtros['estado'];
+        $tipos .= "s";
     }
+
+    $sql .= " ORDER BY s.fecha DESC";
+
+    if (!empty($filtros['limite'])) {
+        $sql .= " LIMIT " . (int)$filtros['limite'];
+    }
+
+    return $this->db->select($sql, $params, $tipos);
+}
 
     /**
      * Eliminar solicitud

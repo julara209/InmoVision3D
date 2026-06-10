@@ -1,9 +1,4 @@
 <?php
-/**
- * Página de Registro
- * InmoVision 3D
- */
-
 require_once __DIR__ . '/../../config/config.php';
 
 // Si ya está logueado, redirigir
@@ -22,6 +17,7 @@ unset($_SESSION['error']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta - InmoVision 3D</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .auth-page {
@@ -44,7 +40,7 @@ unset($_SESSION['error']);
             padding: 40px;
             border-radius: var(--radius);
             width: 100%;
-            max-width: 500px;
+            max-width: 580px;
             box-shadow: var(--shadow-lg);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -248,10 +244,31 @@ unset($_SESSION['error']);
                 </div>
 
                 <div class="form-group">
-                    <label for="contrasena">Contraseña</label>
-                    <input type="password" id="contrasena" name="contrasena" class="form-control" 
-                           placeholder="Mínimo 6 caracteres" required minlength="6">
-                </div>
+    <label for="contrasena">Contraseña</label>
+    <div style="position: relative;">
+        <input type="password" id="contrasena" name="contrasena" class="form-control" 
+               placeholder="Mínimo 6 caracteres" required minlength="6" style="padding-right: 44px;">
+        <button type="button" onclick="togglePw('contrasena','eye1')"
+                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;display:flex;align-items:center;padding:4px;"
+                aria-label="Mostrar u ocultar contraseña">
+            <i class="ti ti-eye" id="eye1"></i>
+        </button>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="confirmar_contrasena">Confirmar contraseña</label>
+    <div style="position: relative;">
+        <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" class="form-control" 
+               placeholder="Repite tu contraseña" required minlength="6" style="padding-right: 44px;">
+        <button type="button" onclick="togglePw('confirmar_contrasena','eye2')"
+                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;display:flex;align-items:center;padding:4px;"
+                aria-label="Mostrar u ocultar contraseña">
+            <i class="ti ti-eye" id="eye2"></i>
+        </button>
+    </div>
+    <small id="pw-msg" style="display:none;margin-top:6px;font-size:0.82rem;"></small>
+</div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Crear Cuenta</button>
             </form>
@@ -272,15 +289,65 @@ unset($_SESSION['error']);
     </div>
 
     <script>
-        // Role selector
-        const roleOptions = document.querySelectorAll('.role-option');
-        roleOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                roleOptions.forEach(o => o.classList.remove('active'));
-                option.classList.add('active');
-            });
+    // Role selector
+    const roleOptions = document.querySelectorAll('.role-option');
+    roleOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            roleOptions.forEach(o => o.classList.remove('active'));
+            option.classList.add('active');
         });
-    </script>
+    });
+
+    // Ojito
+    function togglePw(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'ti ti-eye-off';
+        } else {
+            input.type = 'password';
+            icon.className = 'ti ti-eye';
+        }
+    }
+
+    // Validar que las contraseñas coincidan
+    const pw = document.getElementById('contrasena');
+    const pw2 = document.getElementById('confirmar_contrasena');
+    const msg = document.getElementById('pw-msg');
+
+    function validarContrasenas() {
+        if (pw2.value === '') {
+            msg.style.display = 'none';
+            pw2.style.borderColor = '';
+            return;
+        }
+        if (pw.value === pw2.value) {
+            msg.textContent = '✓ Las contraseñas coinciden';
+            msg.style.color = '#22c55e';
+            pw2.style.borderColor = '#22c55e';
+        } else {
+            msg.textContent = '✗ Las contraseñas no coinciden';
+            msg.style.color = '#ef4444';
+            pw2.style.borderColor = '#ef4444';
+        }
+        msg.style.display = 'block';
+    }
+
+    pw.addEventListener('input', validarContrasenas);
+    pw2.addEventListener('input', validarContrasenas);
+
+    // Bloquear envío si no coinciden
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (pw.value !== pw2.value) {
+            e.preventDefault();
+            msg.textContent = '✗ Las contraseñas no coinciden';
+            msg.style.color = '#ef4444';
+            msg.style.display = 'block';
+            pw2.focus();
+        }
+    });
+</script>
     <script src="../../assets/js/main.js"></script>
 </body>
 </html>

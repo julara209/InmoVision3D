@@ -1,9 +1,4 @@
 <?php
-/**
- * Página de Login
- * InmoVision 3D
- */
-
 require_once __DIR__ . '/../../config/config.php';
 
 // Si ya está logueado, redirigir
@@ -22,6 +17,7 @@ unset($_SESSION['error']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - InmoVision 3D</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         .auth-page {
@@ -44,7 +40,7 @@ unset($_SESSION['error']);
             padding: 40px;
             border-radius: var(--radius);
             width: 100%;
-            max-width: 400px;
+            max-width: 480px;
             box-shadow: var(--shadow-lg);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -199,11 +195,18 @@ unset($_SESSION['error']);
                            placeholder="ejemplo@gmail.com" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="contrasena">Contraseña</label>
-                    <input type="password" id="contrasena" name="contrasena" class="form-control" 
-                           placeholder="********" required>
-                </div>
+                    <div class="form-group">
+    <label for="contrasena">Contraseña</label>
+    <div style="position: relative;">
+        <input type="password" id="contrasena" name="contrasena" class="form-control" 
+               placeholder="********" required style="padding-right: 44px;">
+        <button type="button" onclick="togglePw()"
+                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;display:flex;align-items:center;padding:4px;"
+                aria-label="Mostrar u ocultar contraseña">
+            <i class="ti ti-eye" id="eye-icon"></i>
+        </button>
+    </div>
+</div>
 
                 <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
             </form>
@@ -222,7 +225,20 @@ unset($_SESSION['error']);
             </div>
         </div>
     </div>
-
     <script src="../../assets/js/main.js"></script>
 </body>
+
+<script>
+function togglePw(){
+    const input = document.getElementById('contrasena');
+    const icon = document.getElementById('eye-icon');
+    if(input.type === 'password'){
+        input.type = 'text';
+        icon.className = 'ti ti-eye-off';
+    } else {
+        input.type = 'password';
+        icon.className = 'ti ti-eye';
+    }
+}
+</script>
 </html>

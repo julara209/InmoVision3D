@@ -14,7 +14,7 @@ class Inmueble {
      */
     public function crear($datos) {
         $sql = "INSERT INTO Inmuebles
-                (titulo, descripcion, precio, ubicacion, tipo,
+                (titulo, descripcion, precio, ubicacion, tipo, operacion,
                  habitaciones, banos, area, estado, idPublicador)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -26,6 +26,7 @@ class Inmueble {
                 $datos['precio'],
                 $datos['ubicacion'],
                 $datos['tipo'],
+                $datos['operacion'],
                 $datos['habitaciones'],
                 $datos['banos'],
                 $datos['area'],
@@ -117,7 +118,7 @@ class Inmueble {
 
         $permitidos = [
             'titulo','descripcion','precio','ubicacion',
-            'tipo','habitaciones','banos','area','estado'
+            'tipo', 'operacion','habitaciones','banos','area','estado'
         ];
 
         $tiposCampos = [
@@ -126,6 +127,7 @@ class Inmueble {
             'precio' => 'd',
             'ubicacion' => 's',
             'tipo' => 's',
+            'operacion' => 's',
             'habitaciones' => 'i',
             'banos' => 'i',
             'area' => 'd',
@@ -186,9 +188,9 @@ class Inmueble {
             $tipos .= "s";
         }
 
-        if (!empty($filtros['estado'])) {
-            $sql .= " AND i.estado = ?";
-            $params[] = $filtros['estado'];
+        if (!empty($filtros['operacion'])) {
+            $sql .= " AND i.operacion = ?";
+            $params[] = $filtros['operacion'];
             $tipos .= "s";
         }
 
@@ -247,9 +249,9 @@ class Inmueble {
         $params = [];
         $tipos = "";
 
-        if (!empty($filtros['estado'])) {
-            $sql .= " AND estado = ?";
-            $params[] = $filtros['estado'];
+        if (!empty($filtros['operacion'])) {
+            $sql .= " AND operacion = ?";
+            $params[] = $filtros['operacion'];
             $tipos .= "s";
         }
 
