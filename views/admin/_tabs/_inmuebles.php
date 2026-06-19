@@ -105,6 +105,32 @@ function chipInmueble($valor, $tipo) {
         width:100%; resize:vertical; transition:border-color .2s;
     }
     .form-group textarea:focus { outline:none; border-color:#0ea5e9; }
+
+    /* Plano upload */
+    .plano-upload-area {
+        border: 2px dashed rgba(139,92,246,0.3); border-radius:10px;
+        padding:1.25rem; text-align:center; cursor:pointer;
+        transition:border-color .2s, background .2s; position:relative;
+        background: rgba(139,92,246,0.03);
+    }
+    .plano-upload-area:hover, .plano-upload-area.drag-over {
+        border-color:#8b5cf6; background:rgba(139,92,246,0.07);
+    }
+    .plano-upload-area input[type=file] {
+        position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
+    }
+    .plano-upload-area p { font-size:.8rem; color:#64748b; margin-top:4px; }
+    .plano-upload-area strong { color:#8b5cf6; }
+    .plano-preview {
+        margin-top:.75rem; font-size:.8rem; color:#94a3b8;
+        display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
+    }
+    .plano-preview a { color:#8b5cf6; text-decoration:none; }
+    .plano-preview a:hover { text-decoration:underline; }
+    .plano-preview-img {
+        max-width:100%; border-radius:8px; margin-top:.5rem;
+        border:1px solid rgba(139,92,246,0.2); max-height:160px; object-fit:contain;
+    }
 </style>
 
 <!-- ═══ PANEL INMUEBLES ═══ -->
@@ -175,20 +201,34 @@ function chipInmueble($valor, $tipo) {
                 <?php
                     [$chipOp,  $labelOp]  = chipInmueble($i['operacion'] ?? '', 'operacion');
                     [$chipEst, $labelEst] = chipInmueble($i['estado'] ?? 'disponible', 'estado');
-                    // Primera imagen si viene cargada, si no placeholder emoji
-                    $imgenes   = $inmuebleModel->obtenerImagenes($i['idInmueble']);
-                    $primeraImg = !empty($imgenes) ? htmlspecialchars($imgenes[0]['urlImagen']) : '';
+                    $imagenes    = $inmuebleModel->obtenerImagenes($i['idInmueble']);
+                    $planos      = $inmuebleModel->obtenerPlanos($i['idInmueble']);
+                    $primeraImg  = !empty($imagenes) ? $imagenes[0]['urlImagen'] : '';
+                    // JSON seguro para pasar como data-attribute (evita romper el onclick con URLs que tienen &, ?, etc.)
+                    $imagenesJson = htmlspecialchars(json_encode($imagenes, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+                    $planosJson   = htmlspecialchars(json_encode($planos,   JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
                 ?>
                 <tr data-tipo="<?php echo htmlspecialchars($i['tipo']); ?>"
                     data-operacion="<?php echo htmlspecialchars($i['operacion'] ?? ''); ?>"
                     data-estado="<?php echo htmlspecialchars($i['estado'] ?? ''); ?>"
-                    data-imagenes="<?php echo htmlspecialchars(json_encode($imgenes)); ?>">
+                    data-id="<?php echo $i['idInmueble']; ?>"
+                    data-titulo="<?php echo htmlspecialchars($i['titulo'], ENT_QUOTES); ?>"
+                    data-desc="<?php echo htmlspecialchars($i['descripcion'] ?? '', ENT_QUOTES); ?>"
+                    data-precio="<?php echo (float)$i['precio']; ?>"
+                    data-ubicacion="<?php echo htmlspecialchars($i['ubicacion'], ENT_QUOTES); ?>"
+                    data-hab="<?php echo (int)($i['habitaciones'] ?? 0); ?>"
+                    data-banos="<?php echo (int)($i['banos'] ?? 0); ?>"
+                    data-area="<?php echo (float)($i['area'] ?? 0); ?>"
+                    data-op="<?php echo htmlspecialchars($i['operacion'] ?? '', ENT_QUOTES); ?>"
+                    data-estado-val="<?php echo htmlspecialchars($i['estado'] ?? 'disponible', ENT_QUOTES); ?>"
+                    data-imagenes="<?php echo $imagenesJson; ?>"
+                    data-planos="<?php echo $planosJson; ?>">
                     <td style="color:#64748b;font-size:0.8rem">#<?php echo $i['idInmueble']; ?></td>
                     <td>
                         <div style="display:flex;align-items:center;gap:10px">
                             <div class="thumb-placeholder">
                                 <?php if ($primeraImg): ?>
-                                    <img src="<?php echo $primeraImg; ?>" alt="foto">
+                                    <img src="<?php echo htmlspecialchars($primeraImg); ?>" alt="foto">
                                 <?php else: ?>
                                     🏠
                                 <?php endif; ?>
@@ -201,8 +241,11 @@ function chipInmueble($valor, $tipo) {
                                     <?php echo (int)($i['habitaciones'] ?? 0); ?> hab ·
                                     <?php echo (int)($i['banos'] ?? 0); ?> baños ·
                                     <?php echo $i['area'] ?? '—'; ?> m²
-                                    <?php if (!empty($imgenes)): ?>
-                                        · <span style="color:#0ea5e9"><?php echo count($imgenes); ?> foto<?php echo count($imgenes)>1?'s':''; ?></span>
+                                    <?php if (!empty($imagenes)): ?>
+                                        · <span style="color:#0ea5e9"><?php echo count($imagenes); ?> foto<?php echo count($imagenes)>1?'s':''; ?></span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($planos)): ?>
+                                        · <span style="color:#8b5cf6">plano</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -221,27 +264,17 @@ function chipInmueble($valor, $tipo) {
                     <td>
                         <div class="tbl-actions">
                             <button class="btn-tbl" title="Editar inmueble"
-                                onclick="abrirModalEditarInmueble(
-                                    <?php echo $i['idInmueble']; ?>,
-                                    '<?php echo htmlspecialchars(addslashes($i['titulo'])); ?>',
-                                    '<?php echo htmlspecialchars(addslashes($i['descripcion'] ?? '')); ?>',
-                                    <?php echo (float)$i['precio']; ?>,
-                                    '<?php echo htmlspecialchars(addslashes($i['ubicacion'])); ?>',
-                                    '<?php echo $i['tipo']; ?>',
-                                    '<?php echo $i['operacion'] ?? ''; ?>',
-                                    <?php echo (int)($i['habitaciones'] ?? 0); ?>,
-                                    <?php echo (int)($i['banos'] ?? 0); ?>,
-                                    <?php echo (float)($i['area'] ?? 0); ?>,
-                                    '<?php echo $i['estado'] ?? 'disponible'; ?>',
-                                    <?php echo htmlspecialchars(json_encode($imgenes)); ?>
-                                )">
+                                onclick="abrirModalEditarInmuebleDesdeRow(this.closest('tr'))">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                 </svg>
                             </button>
                             <button class="btn-tbl danger" title="Eliminar inmueble"
-                                onclick="confirmarEliminarInmueble(<?php echo $i['idInmueble']; ?>, '<?php echo htmlspecialchars(addslashes($i['titulo'])); ?>')">
+                                onclick="confirmarEliminarInmueble(
+                                    <?php echo $i['idInmueble']; ?>,
+                                    '<?php echo htmlspecialchars(addslashes($i['titulo'])); ?>'
+                                )">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="3 6 5 6 21 6"/>
                                     <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -341,7 +374,7 @@ function chipInmueble($valor, $tipo) {
 
             <hr class="modal-divider">
 
-            <!-- Zona de imágenes -->
+            <!-- Imágenes -->
             <div class="form-group">
                 <label>Imágenes del inmueble</label>
                 <div class="upload-zone" id="uploadZoneCrear"
@@ -356,6 +389,27 @@ function chipInmueble($valor, $tipo) {
                     <p style="margin-top:4px">JPG, PNG o WEBP · Máx. 5 MB c/u · Varias a la vez</p>
                 </div>
                 <div class="img-preview-grid" id="crearImgPreview"></div>
+            </div>
+
+            <hr class="modal-divider">
+
+            <!-- Plano 2D -->
+            <div class="form-group">
+                <label>Plano 2D
+                    <span style="color:#64748b;font-weight:400;font-size:.78rem">(opcional)</span>
+                </label>
+                <div class="plano-upload-area" id="uploadPlanoCrear"
+                     ondragover="onDragOver(event,'uploadPlanoCrear')"
+                     ondragleave="onDragLeave('uploadPlanoCrear')"
+                     ondrop="onDropPlano(event,'crearPlanoPreview','inputPlanoCrear')">
+                    <input type="file" name="plano_2d" id="inputPlanoCrear"
+                           accept="image/*,.pdf"
+                           onchange="previewPlano(this,'crearPlanoPreview')">
+                    <div style="font-size:1.6rem;margin-bottom:.4rem">📐</div>
+                    <p><strong>Haz clic o arrastra</strong> el plano aquí</p>
+                    <p>JPG, PNG, SVG o PDF</p>
+                </div>
+                <div id="crearPlanoPreview"></div>
             </div>
 
             <div class="form-footer">
@@ -444,7 +498,6 @@ function chipInmueble($valor, $tipo) {
             <div class="form-group" id="seccionImagenesExistentes">
                 <label>Fotos actuales <span id="conteoExistentes" style="color:#64748b;font-weight:400"></span></label>
                 <div class="img-preview-grid" id="editImgExistentes"></div>
-                <!-- IDs de imágenes a eliminar se agregan aquí dinámicamente -->
             </div>
 
             <hr class="modal-divider" id="dividerNuevas">
@@ -464,6 +517,28 @@ function chipInmueble($valor, $tipo) {
                     <p style="margin-top:4px">JPG, PNG o WEBP · Máx. 5 MB c/u</p>
                 </div>
                 <div class="img-preview-grid" id="editImgPreview"></div>
+            </div>
+
+            <hr class="modal-divider">
+
+            <!-- Plano 2D en edición -->
+            <div class="form-group">
+                <label>Plano 2D
+                    <span style="color:#64748b;font-weight:400;font-size:.78rem">(reemplaza el actual si subes uno nuevo)</span>
+                </label>
+                <div id="editPlanoActual" style="margin-bottom:.75rem"></div>
+                <div class="plano-upload-area" id="uploadPlanoEditar"
+                     ondragover="onDragOver(event,'uploadPlanoEditar')"
+                     ondragleave="onDragLeave('uploadPlanoEditar')"
+                     ondrop="onDropPlano(event,'editPlanoPreview','inputPlanoEditar')">
+                    <input type="file" name="plano_2d" id="inputPlanoEditar"
+                           accept="image/*,.pdf"
+                           onchange="previewPlano(this,'editPlanoPreview')">
+                    <div style="font-size:1.6rem;margin-bottom:.4rem">📐</div>
+                    <p><strong>Haz clic o arrastra</strong> el plano aquí</p>
+                    <p>JPG, PNG, SVG o PDF</p>
+                </div>
+                <div id="editPlanoPreview"></div>
             </div>
 
             <div class="form-footer">
@@ -524,9 +599,8 @@ function filtrarTabla() {
 document.getElementById('searchInmuebles').addEventListener('input', filtrarTabla);
 
 /* ────────────────────────────────────────
-   UPLOAD — preview de imágenes nuevas
+   UPLOAD — preview imágenes
 ──────────────────────────────────────── */
-// Mapa de archivos pendientes por zona: { gridId -> DataTransfer }
 const _dt = {};
 
 function previewImagenes(input, gridId) {
@@ -536,7 +610,6 @@ function previewImagenes(input, gridId) {
     Array.from(input.files).forEach(file => {
         if (!file.type.startsWith('image/')) return;
         _dt[gridId].items.add(file);
-
         const reader = new FileReader();
         reader.onload = e => {
             const item = document.createElement('div');
@@ -550,40 +623,26 @@ function previewImagenes(input, gridId) {
         };
         reader.readAsDataURL(file);
     });
-
-    // Sincronizar el input real
     input.files = _dt[gridId].files;
 }
 
 function quitarNueva(btn, gridId, inputId) {
     const item = btn.closest('.img-preview-item');
     const name = item.dataset.name;
-
-    // Reconstruir DataTransfer sin ese archivo
     const dt = new DataTransfer();
-    Array.from(_dt[gridId].files).forEach(f => {
-        if (f.name !== name) dt.items.add(f);
-    });
+    Array.from(_dt[gridId].files).forEach(f => { if (f.name !== name) dt.items.add(f); });
     _dt[gridId] = dt;
     document.getElementById(inputId).files = dt.files;
-
     item.remove();
 }
 
-/* ── Drag & drop ── */
-function onDragOver(e, zoneId) {
-    e.preventDefault();
-    document.getElementById(zoneId).classList.add('drag-over');
-}
-function onDragLeave(zoneId) {
-    document.getElementById(zoneId).classList.remove('drag-over');
-}
+/* ── Drag & drop imágenes ── */
+function onDragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('drag-over'); }
+function onDragLeave(zoneId)   { document.getElementById(zoneId).classList.remove('drag-over'); }
 function onDrop(e, gridId, inputId) {
     e.preventDefault();
-    const zone = e.currentTarget;
-    zone.classList.remove('drag-over');
+    e.currentTarget.classList.remove('drag-over');
     const input = document.getElementById(inputId);
-    // Simular files en el input
     const dt2 = new DataTransfer();
     if (_dt[gridId]) Array.from(_dt[gridId].files).forEach(f => dt2.items.add(f));
     Array.from(e.dataTransfer.files).forEach(f => dt2.items.add(f));
@@ -591,8 +650,36 @@ function onDrop(e, gridId, inputId) {
     previewImagenes(input, gridId);
 }
 
+/* ── Preview plano ── */
+function previewPlano(input, previewId) {
+    const prev = document.getElementById(previewId);
+    prev.innerHTML = '';
+    const file = input.files[0];
+    if (!file) return;
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            prev.innerHTML = `<img src="${e.target.result}" class="plano-preview-img" alt="plano">
+                              <p style="font-size:.75rem;color:#64748b;margin-top:.4rem">📐 ${file.name}</p>`;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        prev.innerHTML = `<div class="plano-preview">📄 <span>${file.name}</span></div>`;
+    }
+}
+
+function onDropPlano(e, previewId, inputId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    const input = document.getElementById(inputId);
+    const dt = new DataTransfer();
+    if (e.dataTransfer.files[0]) dt.items.add(e.dataTransfer.files[0]);
+    input.files = dt.files;
+    previewPlano(input, previewId);
+}
+
 /* ────────────────────────────────────────
-   IMÁGENES EXISTENTES (en editar)
+   IMÁGENES EXISTENTES (editar)
 ──────────────────────────────────────── */
 let _imagenesAEliminar = [];
 
@@ -600,10 +687,7 @@ function renderImagenesExistentes(imagenes) {
     _imagenesAEliminar = [];
     const grid = document.getElementById('editImgExistentes');
     grid.innerHTML = '';
-
-    // Limpiar inputs hidden de eliminación previos
-    document.querySelectorAll('#formEditarInmueble input[name="eliminar_imagen[]"]')
-            .forEach(el => el.remove());
+    document.querySelectorAll('#formEditarInmueble input[name="eliminar_imagen[]"]').forEach(el => el.remove());
 
     const seccion = document.getElementById('seccionImagenesExistentes');
     const divider = document.getElementById('dividerNuevas');
@@ -613,36 +697,37 @@ function renderImagenesExistentes(imagenes) {
         divider.style.display = 'none';
         return;
     }
-
     seccion.style.display = '';
     divider.style.display = '';
-    document.getElementById('conteoExistentes').textContent =
-        '(' + imagenes.length + ')';
+    document.getElementById('conteoExistentes').textContent = '(' + imagenes.length + ')';
 
     imagenes.forEach(img => {
+        // Construir URL correcta: si ya es http(s), usarla tal cual; si no, prefijar SITE_URL
+        const urlImg = (img.urlImagen && img.urlImagen.startsWith('http'))
+            ? img.urlImagen
+            : '<?php echo rtrim(SITE_URL,"/"); ?>/assets/uploads/inmuebles/' + img.urlImagen;
+
         const item = document.createElement('div');
         item.className = 'img-preview-item img-existing-item';
         item.dataset.idImagen = img.idImagen;
         item.innerHTML = `
-            <img src="${img.urlImagen}" alt="foto" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\'><rect width=\\'100%\\' height=\\'100%\\' fill=\\'%230f172a\\'/></svg>'">
-            <button type="button" class="img-remove" onclick="marcarEliminarImagen(this,${img.idImagen})">✕</button>
-            <span class="img-badge">guardada</span>`;
+            <img src="${urlImg}" alt="foto"
+                 onerror="this.parentElement.querySelector('.img-badge').textContent='sin foto'">
+            <button type="button" class="img-remove"
+                    onclick="marcarEliminarImagen(this,${img.idImagen})">✕</button>
+            <span class="img-badge">${img.es_principal == 1 ? 'principal' : 'guardada'}</span>`;
         grid.appendChild(item);
     });
 }
 
 function marcarEliminarImagen(btn, idImagen) {
     const item = btn.closest('.img-preview-item');
-
     if (_imagenesAEliminar.includes(idImagen)) {
-        // Desmarcar
         _imagenesAEliminar = _imagenesAEliminar.filter(x => x !== idImagen);
         item.style.opacity = '1';
         item.style.border = '1px solid rgba(34,197,94,0.3)';
-        document.querySelector(`#formEditarInmueble input[name="eliminar_imagen[]"][value="${idImagen}"]`)
-                ?.remove();
+        document.querySelector(`#formEditarInmueble input[name="eliminar_imagen[]"][value="${idImagen}"]`)?.remove();
     } else {
-        // Marcar para eliminar
         _imagenesAEliminar.push(idImagen);
         item.style.opacity = '.35';
         item.style.border = '1px solid rgba(239,68,68,0.4)';
@@ -655,35 +740,65 @@ function marcarEliminarImagen(btn, idImagen) {
 }
 
 /* ────────────────────────────────────────
+   PLANO EXISTENTE (editar)
+──────────────────────────────────────── */
+function renderPlanoActual(planos) {
+    const div = document.getElementById('editPlanoActual');
+    if (!planos || planos.length === 0) { div.innerHTML = ''; return; }
+    const p = planos[0];
+    const esImg = /\.(jpg|jpeg|png|webp|svg)$/i.test(p.archivo);
+    const url   = (p.archivo.startsWith('http')) ? p.archivo
+                : '<?php echo rtrim(SITE_URL,"/"); ?>/' + p.archivo;
+    div.innerHTML = `
+        <div class="plano-preview">
+            📐 Plano actual:
+            <a href="${url}" target="_blank">${p.nombre || p.archivo}</a>
+        </div>
+        ${esImg ? `<img src="${url}" class="plano-preview-img" alt="plano actual">` : ''}`;
+}
+
+/* ────────────────────────────────────────
    MODALES
 ──────────────────────────────────────── */
 function abrirModalCrearInmueble() {
     document.getElementById('formCrearInmueble').reset();
     document.getElementById('crearImgPreview').innerHTML = '';
+    document.getElementById('crearPlanoPreview').innerHTML = '';
     _dt['crearImgPreview'] = new DataTransfer();
     openModal('modalCrearInmueble');
 }
 
-function abrirModalEditarInmueble(id, titulo, desc, precio, ubicacion, tipo, operacion, hab, banos, area, estado, imagenes) {
-    document.getElementById('editInmuebleId').value        = id;
-    document.getElementById('editInmuebleTitulo').value    = titulo;
-    document.getElementById('editInmuebleDesc').value      = desc;
-    document.getElementById('editInmueblePrecio').value    = precio;
-    document.getElementById('editInmuebleArea').value      = area;
-    document.getElementById('editInmuebleHab').value       = hab;
-    document.getElementById('editInmuebleBanos').value     = banos;
-    document.getElementById('editInmuebleUbicacion').value = ubicacion;
-    document.getElementById('editInmuebleTipo').value      = tipo;
-    document.getElementById('editInmuebleOp').value        = operacion;
-    document.getElementById('editInmuebleEstado').value    = estado;
+// ✅ CORRECCIÓN PRINCIPAL: lee los datos desde data-attributes del <tr>
+// en vez de recibirlos como argumentos del onclick (que se rompía con URLs que tienen & ? etc.)
+function abrirModalEditarInmuebleDesdeRow(tr) {
+    const d = tr.dataset;
 
-    // Limpiar nuevas imágenes
-    document.getElementById('editImgPreview').innerHTML = '';
+    document.getElementById('editInmuebleId').value        = d.id;
+    document.getElementById('editInmuebleTitulo').value    = d.titulo;
+    document.getElementById('editInmuebleDesc').value      = d.desc;
+    document.getElementById('editInmueblePrecio').value    = d.precio;
+    document.getElementById('editInmuebleArea').value      = d.area;
+    document.getElementById('editInmuebleHab').value       = d.hab;
+    document.getElementById('editInmuebleBanos').value     = d.banos;
+    document.getElementById('editInmuebleUbicacion').value = d.ubicacion;
+    document.getElementById('editInmuebleTipo').value      = d.tipo;
+    document.getElementById('editInmuebleOp').value        = d.op;
+    document.getElementById('editInmuebleEstado').value    = d.estadoVal;
+
+    // Limpiar nuevas imágenes y plano
+    document.getElementById('editImgPreview').innerHTML   = '';
+    document.getElementById('editPlanoPreview').innerHTML = '';
     _dt['editImgPreview'] = new DataTransfer();
-    document.getElementById('inputImagenesEditar').value = '';
+    document.getElementById('inputImagenesEditar').value  = '';
+    document.getElementById('inputPlanoEditar').value     = '';
 
-    // Cargar existentes
-    renderImagenesExistentes(imagenes || []);
+    // Cargar imágenes y plano existentes (JSON ya viene decodificado del data-attribute)
+    let imagenes = [], planos = [];
+    try { imagenes = JSON.parse(d.imagenes); } catch(e) {}
+    try { planos   = JSON.parse(d.planos);   } catch(e) {}
+
+    renderImagenesExistentes(imagenes);
+    renderPlanoActual(planos);
 
     openModal('modalEditarInmueble');
 }
@@ -702,8 +817,12 @@ document.getElementById('btnConfirmarEliminarInmueble').addEventListener('click'
     const btn = document.getElementById('btnConfirmarEliminarInmueble');
     btn.disabled = true; btn.textContent = 'Eliminando…';
     try {
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/InmuebleApi.php?action=eliminar&id=${_eliminarInmuebleId}`, { method:'POST' });
-        const data = await res.json();
+const res = await fetch(
+    `<?php echo SITE_URL; ?>/Api/InmueblesApi.php?id=${_eliminarInmuebleId}`,
+    {
+        method:'DELETE'
+    }
+);        const data = await res.json();
         closeModal('modalEliminarInmueble');
         data.success
             ? (showToast('Inmueble eliminado', 'success'), setTimeout(() => location.reload(), 900))
@@ -719,7 +838,7 @@ async function submitCrearInmueble(e) {
     btn.disabled = true; btn.textContent = 'Publicando…';
     try {
         const form = new FormData(document.getElementById('formCrearInmueble'));
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/InmuebleApi.php?action=crear`, { method:'POST', body:form });
+        const res  = await fetch(`<?php echo SITE_URL; ?>/Api/InmueblesApi.php`, { method:'POST', body:form });
         const data = await res.json();
         if (data.success) {
             closeModal('modalCrearInmueble');
@@ -738,8 +857,13 @@ async function submitEditarInmueble(e) {
     try {
         const form = new FormData(document.getElementById('formEditarInmueble'));
         const id   = document.getElementById('editInmuebleId').value;
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/InmuebleApi.php?action=actualizar&id=${id}`, { method:'POST', body:form });
-        const data = await res.json();
+const res = await fetch(
+    `<?php echo SITE_URL; ?>/Api/InmueblesApi.php?id=${id}`,
+    {
+        method:'PUT',
+        body:form
+    }
+);        const data = await res.json();
         if (data.success) {
             closeModal('modalEditarInmueble');
             showToast('Inmueble actualizado correctamente', 'success');

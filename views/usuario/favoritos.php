@@ -164,7 +164,7 @@ $favoritos = $favoritoModel->obtenerPorUsuario($_SESSION['usuario_id']);
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 InmoVision3D. Todos los derechos reservados.</p>
+            <p>&copy; 2026 InmoVision3D. Todos los derechos reservados.</p>
         </div>
     </footer>
 

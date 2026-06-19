@@ -43,7 +43,8 @@ if (isLoggedIn()) {
     <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
 </a>
             <nav class="nav" id="mainNav">
-                <a href="views/inmuebles/listar.php" class="nav-link">Ver Inmuebles</a>
+                <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
+                <a href="views/inmuebles/listar.php" class="nav-link">Inmuebles</a>
                 <?php if (isPublicador()): ?>
                     <a href="views/inmuebles/publicar.php" class="nav-link">Publicar</a>
                 <?php endif; ?>
@@ -277,14 +278,12 @@ if (isLoggedIn()) {
         <div class="footer-container">
             <div class="footer-brand">
                 <a href="index.php" class="logo">
-                    <div class="logo-icon">
-                        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M20 2L38 14V38H2V14L20 2Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                            <path d="M14 38V24H26V38" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="20" cy="16" r="4" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </div>
-                    <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
+                    <img 
+        src="assets/img/logo.png" 
+        alt="InmoVision 3D logo" 
+        class="logo-icon"
+    >
+    <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
                 </a>
                 <p>El futuro de la inmobiliaria está aquí.</p>
             </div>

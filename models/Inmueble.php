@@ -16,7 +16,7 @@ class Inmueble {
         $sql = "INSERT INTO Inmuebles
                 (titulo, descripcion, precio, ubicacion, tipo, operacion,
                  habitaciones, banos, area, estado, idPublicador)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         return $this->db->insert(
             $sql,
@@ -33,7 +33,7 @@ class Inmueble {
                 $datos['estado'] ?? ESTADO_DISPONIBLE,
                 $datos['idPublicador']
             ],
-            "ssdssiidsi"
+            "ssdsssiidsi"
         );
     }
 
@@ -86,6 +86,26 @@ class Inmueble {
         );
     }
 
+    public function agregarImagenPrincipal($idInmueble, $urlImagen)
+{
+    // Quitar principal anterior
+    $sql = "UPDATE Imagenes_inmueble
+            SET es_principal = 0
+            WHERE idInmueble = ?";
+
+    $this->db->update($sql, [$idInmueble], "i");
+
+    // Insertar nueva principal
+    $sql = "INSERT INTO Imagenes_inmueble
+            (urlImagen, es_principal, idInmueble)
+            VALUES (?, 1, ?)";
+
+    return $this->db->insert(
+        $sql,
+        [$urlImagen, $idInmueble],
+        "si"
+    );
+}
     /**
      * Eliminar imagen.
      */
@@ -173,7 +193,11 @@ class Inmueble {
 
         $sql = "SELECT i.*,
                 u.nombre AS publicador_nombre,
-                u.apellido AS publicador_apellido
+                u.apellido AS publicador_apellido,
+                (SELECT img.urlImagen FROM Imagenes_inmueble img
+                 WHERE img.idInmueble = i.idInmueble
+                 ORDER BY img.es_principal DESC, img.idImagen ASC
+                 LIMIT 1) AS imagen_principal
                 FROM Inmuebles i
                 INNER JOIN Usuarios u
                 ON i.idPublicador = u.idUsuario

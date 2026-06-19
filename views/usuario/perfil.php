@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $datos = [
                 'nombre'    => trim($_POST['nombre']),
                 'apellido'    => trim($_POST['apellido']),
-                'email'     => trim($_POST['correo']),
+                'correo'     => trim($_POST['email']),
                 'telefono'  => trim($_POST['telefono']?? '')
             ];
             if ($usuarioModel->actualizar($_SESSION['usuario_id'], $datos)) {
@@ -52,12 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Iniciales para el avatar de texto
-$iniciales = '';
-$palabras = explode(' ', trim($usuario['nombre']));
-foreach (array_slice($palabras, 0, 2) as $p) {
-    $iniciales .= strtoupper(mb_substr($p, 0, 1));
-}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -114,17 +108,20 @@ foreach (array_slice($palabras, 0, 2) as $p) {
 
         /* Avatar de iniciales */
         .avatar-initials {
-            width: 96px; height: 96px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #0ea5e9, #f97316);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: 700; color: #fff;
+            background: rgba(14, 165, 233, 0.2);
+            color: #0ea5e9;
+            font-size: 2.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(14, 165, 233, 0.4);
             flex-shrink: 0;
-            box-shadow: 0 0 0 4px #1e293b, 0 0 0 6px rgba(14,165,233,0.3);
-            margin-bottom: -1.25rem; /* sobresale ligeramente */
-            position: relative; z-index: 1;
+            margin-bottom: 1rem;
         }
-
         .perfil-hero-text {
             padding-bottom: 1.5rem;
             flex: 1;
@@ -317,36 +314,29 @@ foreach (array_slice($palabras, 0, 2) as $p) {
 <!-- ═══ HEADER ═══ -->
 <header class="header">
     <div class="header-container">
-        <a href="<?php echo BASE_URL; ?>index.php" class="logo">
-            <img src="<?php echo BASE_URL; ?>assets/img/logo.png" alt="InmoVision 3D" class="logo-icon" width="50" height="50">
+        <a href="<?php echo SITE_URL; ?>index.php" class="logo">
+            <img src="<?php echo SITE_URL; ?>/assets/img/logo.png" alt="InmoVision 3D" class="logo-icon" width="50" height="50">
             <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
         </a>
 
         <nav class="nav" id="mainNav">
             <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
             <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php" class="nav-link">Inmuebles</a>
-            <a href="<?php echo SITE_URL; ?>/views/usuario/favoritos.php" class="nav-link">Favoritos</a>
             <?php if (in_array($_SESSION['rol'], ['publicador','admin'])): ?>
             <a href="<?php echo SITE_URL; ?>/views/inmuebles/publicar.php" class="nav-link">Publicar</a>
-            <?php endif; ?>
-            <?php if ($_SESSION['rol'] === 'admin'): ?>
-            <a href="<?php echo SITE_URL; ?>views/admin/dashboard.php" class="nav-link">Admin</a>
             <?php endif; ?>
         </nav>
 
         <div class="profile-nav" id="profileNav">
             <div class="profile-box">
-                <!-- Avatar de iniciales en el header -->
-                <span style="
-                    width:34px;height:34px;border-radius:50%;
-                    background:linear-gradient(135deg,#0ea5e9,#f97316);
-                    display:flex;align-items:center;justify-content:center;
-                    font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0;
-                "><?php echo $iniciales; ?></span>
-                <span><?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
+                            <div class="avatar"><?php echo strtoupper(substr($_SESSION['nombre'], 0, 2)); ?></div>
+                            <span><?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
             </div>
             <div class="dropdown-menu" id="profileDropdown">
                 <a href="<?php echo SITE_URL; ?>/views/usuario/perfil.php" class="active"> Mi perfil</a>
+                <?php if (isPublicador()): ?>
+                <a href="<?php echo SITE_URL; ?>/views/usuario/mis-inmuebles.php">Mis Inmuebles</a>
+                <?php endif; ?>
                 <a href="<?php echo SITE_URL; ?>/views/usuario/favoritos.php"> Favoritos </a>
                 <a href="<?php echo SITE_URL; ?>/views/usuario/solicitudes.php"> Solicitudes </a>
                 <?php if ($_SESSION['rol'] === 'admin'): ?>
@@ -386,7 +376,7 @@ foreach (array_slice($palabras, 0, 2) as $p) {
     <!-- Hero del perfil -->
     <div class="perfil-hero">
         <div class="perfil-hero-inner">
-            <div class="avatar-initials"><?php echo $iniciales; ?></div>
+            <div class="avatar-initials"><?php echo strtoupper(substr($_SESSION['nombre'], 0, 2)); ?></div>
             <div class="perfil-hero-text">
                 <h1><?php echo htmlspecialchars($usuario['nombre']); ?></h1>
                 <p class="hero-email"><?php echo htmlspecialchars($usuario['correo']); ?></p>
@@ -524,14 +514,6 @@ foreach (array_slice($palabras, 0, 2) as $p) {
                         <div style="background:#0f172a;border-radius:10px;padding:1rem 1.25rem;
                                     border:1px solid rgba(255,255,255,0.07);">
                             <div style="font-size:.72rem;color:#475569;text-transform:uppercase;
-                                        letter-spacing:.04em;margin-bottom:4px;">Miembro desde</div>
-                            <div style="font-size:.9rem;color:#94a3b8;">
-                                <?php echo date('d \d\e F \d\e Y', strtotime($usuario['fecha_registro'])); ?>
-                            </div>
-                        </div>
-                        <div style="background:#0f172a;border-radius:10px;padding:1rem 1.25rem;
-                                    border:1px solid rgba(255,255,255,0.07);">
-                            <div style="font-size:.72rem;color:#475569;text-transform:uppercase;
                                         letter-spacing:.04em;margin-bottom:4px;">Rol</div>
                             <span class="rol-chip rol-<?php echo $usuario['rol']; ?>">
                                 <?php echo ucfirst($usuario['rol']); ?>
@@ -569,13 +551,6 @@ foreach (array_slice($palabras, 0, 2) as $p) {
                         <span class="stat-label">Solicitudes</span>
                     </div>
                     <?php endif; ?>
-                    <div class="stat-item">
-                        <i class="fas fa-calendar-check"></i>
-                        <span class="stat-value" style="font-size:1rem;">
-                            <?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?>
-                        </span>
-                        <span class="stat-label">Miembro desde</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -587,7 +562,7 @@ foreach (array_slice($palabras, 0, 2) as $p) {
 <!-- Footer -->
 <footer class="footer">
     <div class="footer-bottom">
-        <p>&copy; 2024 InmoVision3D. Todos los derechos reservados.</p>
+        <p>&copy; 2026 InmoVision3D. Todos los derechos reservados.</p>
     </div>
 </footer>
 
@@ -624,7 +599,7 @@ function togglePw(inputId, btn) {
 }
 
 // Estadísticas
-fetch('<?php echo SITE_URL; ?>/api/estadisticas.php?usuario_id=<?php echo $_SESSION['usuario_id']; ?>')
+fetch('<?php echo SITE_URL; ?>/Api/estadisticas.php?usuario_id=<?php echo $_SESSION['usuario_id']; ?>')
     .then(r => r.json())
     .then(data => {
         if (!data.success) return;

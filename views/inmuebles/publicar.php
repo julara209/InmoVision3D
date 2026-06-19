@@ -24,7 +24,7 @@ $inmueble = null;
 if (isset($_GET['edit'])) {
     $editMode = true;
     $inmueble = $inmuebleModel->obtenerPorId(intval($_GET['edit']));
-    if (!$inmueble || ($inmueble['idPublicador'] !== $_SESSION['idPublicador'] && $_SESSION['rol'] !== 'administrador')) {
+    if (!$inmueble || ($inmueble['idPublicador'] != $_SESSION['usuario_id'] && $_SESSION['rol'] !== 'admin')) {
         header('Location: ' . SITE_URL . '/views/inmuebles/listar.php');
         exit;
     }
@@ -35,13 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'titulo'       => trim($_POST['titulo']),
         'descripcion'  => trim($_POST['descripcion']),
         'tipo'         => $_POST['tipo'],
-        'estado'       => $_POST['estado'],
+        'operacion'       => $_POST['operacion'],
+        'estado'       => 'disponible',   
         'precio'       => floatval($_POST['precio']),
         'area'         => floatval($_POST['area']),
         'habitaciones' => intval($_POST['habitaciones']),
         'banos'        => intval($_POST['banos']),
         'ubicacion'    => trim($_POST['ubicacion'] ?? ''),
-        'idPublicador' => $_SESSION['idPublicador']
+        'idPublicador' => $_SESSION['usuario_id']
     ];
 
     if (empty($datos['titulo']) || empty($datos['descripcion'])) {
@@ -73,6 +74,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             else             $error   = 'Error al publicar el inmueble';
         }
 
+        // Guardar imagen principal en Imagenes_inmueble con es_principal = 1
+        if (!$error && isset($inmuebleId) && !empty($datos['imagen_principal'])) {
+            $inmuebleModel->agregarImagenPrincipal($inmuebleId, $datos['imagen_principal']);
+        }
+
         if (!$error && isset($inmuebleId) && isset($_FILES['imagenes_adicionales'])) {
             $files = $_FILES['imagenes_adicionales'];
             for ($i = 0; $i < count($files['name']); $i++) {
@@ -91,13 +97,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$error && isset($inmuebleId) && isset($_FILES['plano_2d']) && $_FILES['plano_2d']['error'] === UPLOAD_ERR_OK) {
             $ext        = strtolower(pathinfo($_FILES['plano_2d']['name'], PATHINFO_EXTENSION));
-            $permitidas = ['jpg','jpeg','png','svg','pdf'];
+            $permitidas = ['jpg','jpeg','png','svg','pdf','webp'];
             if (in_array($ext, $permitidas)) {
                 $nombrePlano = 'plano_' . $inmuebleId . '_' . time() . '.' . $ext;
                 $rutaPlano   = __DIR__ . '/../../assets/uploads/planos/' . $nombrePlano;
                 if (move_uploaded_file($_FILES['plano_2d']['tmp_name'], $rutaPlano)) {
-                    $planoModel->crear(['inmueble_id' => $inmuebleId, 'archivo_2d' => $nombrePlano, 'tipo' => 'subido']);
-                    $inmuebleModel->actualizar($inmuebleId, ['tiene_plano_3d' => 1]);
+                    // Si ya había un plano, lo reemplazamos por el nuevo
+                    foreach ($planoModel->obtenerPorInmueble($inmuebleId) as $p) {
+                        $planoModel->eliminar($p['id']);
+                    }
+                    $planoModel->crear([
+                        'inmueble_id' => $inmuebleId,
+                        'nombre'      => 'Plano de ' . $datos['titulo'],
+                        'archivo'     => 'assets/uploads/planos/' . $nombrePlano,
+                        'tipo'        => 'subido'
+                    ]);
                 }
             }
         }
@@ -117,6 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title><?php echo $editMode ? 'Editar' : 'Publicar'; ?> Inmueble — InmoVision3D</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/styles.css">
+
     <style>
         /* ── Reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -473,7 +489,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php">Inmuebles</a>
         <a href="<?php echo SITE_URL; ?>/views/inmuebles/publicar.php" class="active">Publicar</a>
         <?php if ($_SESSION['rol'] === 'admin'): ?>
-        <a href="<?php echo SITE_URL; ?>/views/admin/dashboard.php">Admin</a>
         <?php endif; ?>
     </nav>
 
@@ -482,6 +497,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <span class="pname"><?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
         <div class="adm-dropdown" id="profileDropdown">
             <a href="<?php echo SITE_URL; ?>/views/usuario/perfil.php">Mi perfil</a>
+            <?php if (isPublicador()): ?>
+            <a href="<?php echo SITE_URL; ?>/views/usuario/mis-inmuebles.php">Mis Inmuebles</a>
+            <?php endif; ?>
             <a href="<?php echo SITE_URL; ?>/views/usuario/favoritos.php">Favoritos</a>
             <a href="<?php echo SITE_URL; ?>/views/usuario/solicitudes.php">Solicitudes</a>
             <?php if ($_SESSION['rol'] === 'admin'): ?>
@@ -499,9 +517,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-        <a href="<?php echo SITE_URL; ?>/index.php">Inicio</a>
+        <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
         <span class="sep">›</span>
-        <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php">Inmuebles</a>
+        <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php" class="nav-link">Inmuebles</a>
         <span class="sep">›</span>
         <span class="current"><?php echo $editMode ? 'Editar inmueble' : 'Publicar inmueble'; ?></span>
     </div>
@@ -566,12 +584,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
-                    <!-- ESTADO -->
+                    <!-- OPERACION -->
                     <div class="fgroup">
                         <label>Disponibilidad <span class="req">*</span></label>
-                        <select name="estado" id="estado-select" class="hidden-select" required>
-                            <option value="venta"   <?php echo ($inmueble['estado'] ?? '') === 'venta'   ? 'selected' : ''; ?>>En Venta</option>
-                            <option value="arriendo"<?php echo ($inmueble['estado'] ?? '') === 'arriendo'? 'selected' : ''; ?>>En Arriendo</option>
+                        <select name="operacion" id="estado-select" class="hidden-select" required>
+                            <option value="venta"   <?php echo ($inmueble['operacion'] ?? '') === 'venta'   ? 'selected' : ''; ?>>En Venta</option>
+                            <option value="arriendo"<?php echo ($inmueble['operacion'] ?? '') === 'arriendo'? 'selected' : ''; ?>>En Arriendo</option>
                         </select>
                         <div class="btn-radio-group" id="estado-btns">
                             <button type="button" class="btn-radio" data-val="venta"><i class="fas fa-tag"></i> En venta</button>
@@ -677,11 +695,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="pub-card">
             <div class="pub-card-header">
                 <div class="card-icon"><i class="fas fa-cube"></i></div>
-                <h2>Plano 2D para vista 3D <span style="color:#334155;font-size:.8rem;font-weight:400;">(opcional)</span></h2>
+                <h2>Plano 2D <span class="req">*</span></h2>
             </div>
             <div class="pub-card-body">
                 <p style="font-size:.82rem;color:#475569;margin-bottom:1.25rem;">
-                    Sube un plano o dibuja uno para que tus clientes puedan recorrer el inmueble en 3D.
+                    Sube un plano o dibuja uno para que tus clientes puedan recorrer el inmueble.
                 </p>
 
                 <div class="plano-opts">
@@ -706,6 +724,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p>JPG, PNG, SVG o PDF</p>
                         <input type="file" id="plano_2d" name="plano_2d" accept="image/*,.pdf">
                     </div>
+                    <?php if ($editMode && !empty($inmueble['planos'])): ?>
+                        <div style="margin-top:.75rem;font-size:.8rem;color:#94a3b8;">
+                            Plano actual:
+                            <?php foreach ($inmueble['planos'] as $p): ?>
+                                <a href="<?php echo SITE_URL . $p['archivo']; ?>" target="_blank" style="color:#0ea5e9;"><?php echo htmlspecialchars($p['nombre']); ?></a>
+                            <?php endforeach; ?>
+                            <span style="color:#475569;"> — sube uno nuevo para reemplazarlo.</span>
+                        </div>
+                    <?php endif; ?>
                     <div class="upload-preview" id="preview-plano"></div>
                 </div>
 

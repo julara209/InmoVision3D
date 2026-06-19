@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../models/Inmueble.php';
-require_once __DIR__ . '/../models/Favorito.php';
+// Favorito puede no existir aún — cargamos solo si existe
+if (file_exists(__DIR__ . '/../models/Favorito.php')) {
+    require_once __DIR__ . '/../models/Favorito.php';
+}
 
 class InmuebleController {
 
@@ -10,7 +13,7 @@ class InmuebleController {
 
     public function __construct() {
         $this->inmueble = new Inmueble();
-        $this->favorito = new Favorito();
+        $this->favorito = class_exists('Favorito') ? new Favorito() : null;
     }
 
     /**
@@ -34,7 +37,7 @@ class InmuebleController {
         $inmuebles = $this->inmueble->listar($filtros);
         $total = $this->inmueble->contar($filtros);
 
-        if (isLoggedIn()) {
+        if (isLoggedIn() && $this->favorito) {
 
             $favoritosIds = $this->favorito->obtenerIds($_SESSION['usuario_id']);
 
@@ -67,7 +70,7 @@ class InmuebleController {
             ];
         }
 
-        if (isLoggedIn()) {
+        if (isLoggedIn() && $this->favorito) {
 
             $inmueble['es_favorito'] =
                 $this->favorito->existe(
@@ -77,7 +80,9 @@ class InmuebleController {
         }
 
         $inmueble['total_favoritos'] =
-            $this->favorito->contarPorInmueble($id);
+            $this->favorito
+                ? $this->favorito->contarPorInmueble($id)
+                : 0;
 
         return [
             'success' => true,
@@ -153,6 +158,12 @@ class InmuebleController {
 
         requirePublicador();
 
+        // PHP no parsea multipart en PUT automáticamente.
+        // Si el método es PUT, parseamos el stream manualmente.
+        if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+            $this->parsePutMultipart();
+        }
+
         $inmueble = $this->inmueble->obtenerPorId($id);
 
         if (!$inmueble) {
@@ -201,6 +212,13 @@ class InmuebleController {
         }
 
         $this->inmueble->actualizar($id, $datos);
+
+        // Eliminar imágenes marcadas desde el formulario de edición
+        if (!empty($_POST['eliminar_imagen']) && is_array($_POST['eliminar_imagen'])) {
+            foreach ($_POST['eliminar_imagen'] as $idImagen) {
+                $this->inmueble->eliminarImagen((int)$idImagen);
+            }
+        }
 
         if (!empty($_FILES['imagenes']['name'][0])) {
             $this->procesarImagenes($id, $_FILES['imagenes']);
@@ -321,6 +339,87 @@ class InmuebleController {
             'success' => true,
             'inmuebles' => $inmuebles
         ];
+    }
+    /**
+     * Parsea multipart/form-data para peticiones PUT.
+     * PHP solo parsea $_POST y $_FILES en POST; en PUT hay que hacerlo manual.
+     */
+    private function parsePutMultipart(): void
+    {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+
+        if (strpos($contentType, 'multipart/form-data') === false) {
+            // JSON o urlencoded
+            $body = file_get_contents('php://input');
+            if ($body) {
+                parse_str($body, $parsed);
+                foreach ($parsed as $k => $v) {
+                    $_POST[$k] = $v;
+                }
+            }
+            return;
+        }
+
+        // Extraer boundary
+        preg_match('/boundary=(.+)$/', $contentType, $m);
+        if (empty($m[1])) return;
+        $boundary = '--' . trim($m[1]);
+
+        $raw   = file_get_contents('php://input');
+        $parts = array_slice(explode($boundary, $raw), 1);
+
+        foreach ($parts as $part) {
+            if (trim($part) === '--') continue;
+
+            [$headerBlock, $body] = explode("\r\n\r\n", $part, 2);
+            $body = rtrim($body, "\r\n");
+
+            $headers = [];
+            foreach (explode("\r\n", $headerBlock) as $line) {
+                if (strpos($line, ':') !== false) {
+                    [$hk, $hv] = explode(':', $line, 2);
+                    $headers[strtolower(trim($hk))] = trim($hv);
+                }
+            }
+
+            $disp = $headers['content-disposition'] ?? '';
+            preg_match('/name="([^"]+)"/', $disp, $nameMatch);
+            $name = $nameMatch[1] ?? '';
+
+            if (preg_match('/filename="([^"]+)"/', $disp, $fnMatch)) {
+                // Archivo
+                $filename = $fnMatch[1];
+                $tmp = tempnam(sys_get_temp_dir(), 'put_upload_');
+                file_put_contents($tmp, $body);
+                $type = $headers['content-type'] ?? 'application/octet-stream';
+
+                // Soporte para arrays: imagenes[]
+                $cleanName = rtrim($name, '[]');
+                if (substr($name, -2) === '[]') {
+                    $_FILES[$cleanName]['name'][]     = $filename;
+                    $_FILES[$cleanName]['tmp_name'][] = $tmp;
+                    $_FILES[$cleanName]['type'][]     = $type;
+                    $_FILES[$cleanName]['size'][]     = strlen($body);
+                    $_FILES[$cleanName]['error'][]    = UPLOAD_ERR_OK;
+                } else {
+                    $_FILES[$name] = [
+                        'name'     => $filename,
+                        'tmp_name' => $tmp,
+                        'type'     => $type,
+                        'size'     => strlen($body),
+                        'error'    => UPLOAD_ERR_OK,
+                    ];
+                }
+            } else {
+                // Campo de texto — soporta arrays (eliminar_imagen[])
+                if (substr($name, -2) === '[]') {
+                    $cleanName = rtrim($name, '[]');
+                    $_POST[$cleanName][] = $body;
+                } else {
+                    $_POST[$name] = $body;
+                }
+            }
+        }
     }
 }
 ?>

@@ -34,6 +34,7 @@ $tab = in_array($_GET['tab'] ?? '', $tabsValidos) ? $_GET['tab'] : 'usuarios';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - InmoVision3D</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/styles.css">
     <style>
         /* ── Reset ── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -321,8 +322,9 @@ $tab = in_array($_GET['tab'] ?? '', $tabsValidos) ? $_GET['tab'] : 'usuarios';
     </a>
 
     <nav class="adm-header-nav">
-        <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php">Ver Inmuebles</a>
-        <a href="<?php echo SITE_URL; ?>/views/inmuebles/publicar.php">Publicar</a>
+        <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
+        <a href="<?php echo SITE_URL; ?>/views/inmuebles/listar.php" class="nav-link">Inmuebles</a>
+        <a href="<?php echo SITE_URL; ?>/views/inmuebles/publicar.php" class="nav-link">Publicar</a>
     </nav>
 
     <div class="adm-profile" id="profileBtn">
@@ -330,6 +332,9 @@ $tab = in_array($_GET['tab'] ?? '', $tabsValidos) ? $_GET['tab'] : 'usuarios';
         <span class="pname"><?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
         <div class="adm-dropdown" id="profileDropdown">
             <a href="<?php echo SITE_URL; ?>/views/usuario/perfil.php">Mi perfil</a>
+            <?php if (isPublicador()): ?>
+            <a href="<?php echo SITE_URL; ?>/views/usuario/mis-inmuebles.php">Mis Inmuebles</a>
+            <?php endif; ?>
             <a href="<?php echo SITE_URL; ?>/views/usuario/favoritos.php">Favoritos</a>
             <a href="<?php echo SITE_URL; ?>/views/usuario/solicitudes.php">Solicitudes</a>
             <hr>

@@ -230,32 +230,40 @@ $totalFavoritos = $favoritoModel->contarPorInmueble($id);
     </style>
 </head>
 <body>
-    <!-- Header -->
+     <!-- Header -->
     <header class="header">
         <div class="header-container">
-            <a href="../../index.php" class="logo">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 2L38 14V38H2V14L20 2Z" stroke="currentColor" stroke-width="2" fill="none"/>
-                        <path d="M14 38V24H26V38" stroke="currentColor" stroke-width="2"/>
-                        <circle cx="20" cy="16" r="4" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                </div>
-                <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
-            </a>
-            <nav class="nav" id="mainNav">
-                <a href="../../index.php" class="nav-link">Inicio</a>
-                <a href="listar.php" class="nav-link">Ver Inmuebles</a>
+            <a href="index.php" class="logo">
+    <img 
+        src="../../assets/img/logo.png" 
+        alt="InmoVision 3D logo" 
+        class="logo-icon"
+    >
+    <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
+</a>
+             <nav class="nav" id="mainNav">
+                <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
+                <a href="listar.php" class="nav-link">Inmuebles</a>
+                <?php if (isPublicador()): ?>
+                    <a href="publicar.php" class="nav-link">Publicar</a>
+                <?php endif; ?>
                 <?php if (isLoggedIn()): ?>
                     <div class="profile-nav" id="profileNav">
                         <div class="profile-box">
-                            <img src="<?php echo $_SESSION['avatar'] ? '../../assets/uploads/avatars/' . $_SESSION['avatar'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png'; ?>" alt="Avatar">
+                            <div class="avatar"><?php echo strtoupper(substr($_SESSION['nombre'], 0, 2)); ?></div>
                             <span><?php echo htmlspecialchars($_SESSION['nombre']); ?></span>
                         </div>
                         <div class="dropdown-menu" id="dropdownMenu">
                             <a href="../usuario/perfil.php">Mi Perfil</a>
+                            <?php if (isPublicador()): ?>
+                                <a href="views/usuario/mis-inmuebles.php">Mis Inmuebles</a>
+                            <?php endif; ?>
                             <a href="../usuario/favoritos.php">Favoritos</a>
                             <a href="../usuario/solicitudes.php">Solicitudes</a>
+                            <?php if (isAdmin()): ?>
+                                <div class="dropdown-divider"></div>
+                                <a href="../admin/dashboard.php">Panel Admin</a>
+                            <?php endif; ?>
                             <div class="dropdown-divider"></div>
                             <a href="../../controllers/AuthController.php?action=logout">Cerrar Sesión</a>
                         </div>

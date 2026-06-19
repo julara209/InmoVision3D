@@ -150,6 +150,41 @@ class Usuario {
     }
 
     /**
+ * Cambiar contraseña
+ */
+public function cambiarPassword($idUsuario, $passwordActual, $passwordNueva)
+{
+    $usuario = $this->obtenerPorId($idUsuario);
+
+    if (!$usuario) {
+        return false;
+    }
+
+    $usuarioCompleto = $this->obtenerPorCorreo($usuario['correo']);
+
+    if (
+        !$usuarioCompleto ||
+        !password_verify($passwordActual, $usuarioCompleto['contrasena'])
+    ) {
+        return false;
+    }
+
+    $passwordHash = password_hash(
+        $passwordNueva,
+        PASSWORD_DEFAULT
+    );
+
+    $sql = "UPDATE usuarios
+            SET contrasena = ?
+            WHERE idUsuario = ?";
+
+    return $this->db->update(
+        $sql,
+        [$passwordHash, $idUsuario],
+        "si"
+    );
+}
+    /**
      * Eliminar usuario
      */
     public function eliminar($id) {

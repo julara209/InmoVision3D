@@ -278,9 +278,12 @@ document.getElementById('btnConfirmarEliminar').addEventListener('click', async 
     btn.textContent = 'Eliminando…';
 
     try {
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/AdminApi.php?action=eliminar&id=${_eliminarId}`, {
-            method: 'POST'
-        });
+        const form = new FormData();
+        form.append('_method', 'DELETE');
+        const res = await fetch(`<?php echo SITE_URL; ?>/Api/AdminApi.php?id=${_eliminarId}`, {
+        method: 'POST', body: form
+    }
+);
         const data = await res.json();
         closeModal('modalEliminar');
         if (data.success) {
@@ -306,7 +309,7 @@ async function submitCrear(e) {
 
     try {
         const form = new FormData(document.getElementById('formCrear'));
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/AdminApi.php?action=crear`, {
+        const res  = await fetch(`<?php echo SITE_URL; ?>/Api/AdminApi.php?action=crear`, {
             method: 'POST', body: form
         });
         const data = await res.json();
@@ -333,9 +336,11 @@ async function submitEditar(e) {
     try {
         const form = new FormData(document.getElementById('formEditar'));
         const id   = document.getElementById('editId').value;
-        const res  = await fetch(`<?php echo SITE_URL; ?>/controllers/AdminApi.php?action=actualizar&id=${id}`, {
-            method: 'POST', body: form
-        });
+        form.append('_method', 'PUT');
+        const res = await fetch(`<?php echo SITE_URL; ?>/Api/AdminApi.php?id=${id}`, {
+        method: 'POST', body: form
+    }
+);
         const data = await res.json();
         if (data.success) {
             closeModal('modalEditar');
