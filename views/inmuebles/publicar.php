@@ -5,7 +5,7 @@ require_once __DIR__ . '/../../models/Inmueble.php';
 require_once __DIR__ . '/../../models/Plano.php';
 
 if (!isset($_SESSION['usuario_id'])) {
-    header('Location: ' . SITE_URL . 'views/auth/login.php');
+    header('Location: ' . SITE_URL . '/views/auth/login.php');
     exit;
 }
 if ($_SESSION['rol'] === 'cliente') {
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($mensaje && !$editMode) {
-            header('Location: ' . SITE_URL . 'views/inmuebles/detalle.php?id=' . $inmuebleId . '&nuevo=1');
+            header('Location: ' . SITE_URL . '/views/inmuebles/detalle.php?id=' . $inmuebleId . '&nuevo=1');
             exit;
         }
     }
@@ -128,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../Assets/img/logo.png" type="image/png" />
     <title><?php echo $editMode ? 'Editar' : 'Publicar'; ?> Inmueble — InmoVision3D</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

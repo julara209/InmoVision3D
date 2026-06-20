@@ -1,8 +1,5 @@
 <?php
-/**
- * Tab: Inmuebles
- * Incluido desde dashboard.php — tiene acceso a $inmuebleModel y la sesión
- */
+/* Tab: Inmuebles */
 $inmuebles = $inmuebleModel->listar();
 
 function chipInmueble($valor, $tipo) {
@@ -13,9 +10,8 @@ function chipInmueble($valor, $tipo) {
     }
     if ($tipo === 'estado') {
         if ($valor === 'disponible') return ['chip-disp',    'Disponible'];
-        if ($valor === 'vendido')    return ['chip-vendido',  'Vendido'];
+        if ($valor === 'vendido')    return ['chip-vendido',  'Vendido '];
         if ($valor === 'arrendado')  return ['chip-arriendo', 'Arrendado'];
-        if ($valor === 'pausado')    return ['chip-pausado',  'Pausado'];
         return ['chip-cliente', ucfirst($valor)];
     }
     return ['chip-cliente', ucfirst($valor)];
@@ -421,9 +417,7 @@ function chipInmueble($valor, $tipo) {
 </div>
 
 
-<!-- ═══════════════════════════════════
-     MODAL — EDITAR INMUEBLE
-═══════════════════════════════════ -->
+<!-- MODAL — EDITAR INMUEBLE -->
 <div class="modal-overlay" id="modalEditarInmueble">
     <div class="modal-box" style="max-width:640px">
         <div class="modal-header">
@@ -550,9 +544,7 @@ function chipInmueble($valor, $tipo) {
 </div>
 
 
-<!-- ═══════════════════════════════════
-     MODAL — CONFIRMAR ELIMINAR
-═══════════════════════════════════ -->
+<!--  MODAL — CONFIRMAR ELIMINAR-->
 <div class="modal-overlay" id="modalEliminarInmueble">
     <div class="modal-box" style="max-width:420px;text-align:center">
         <div style="margin-bottom:1.25rem">
@@ -576,9 +568,7 @@ function chipInmueble($valor, $tipo) {
 
 
 <script>
-/* ────────────────────────────────────────
-   FILTROS + BÚSQUEDA
-──────────────────────────────────────── */
+/*FILTROS + BÚSQUEDA */
 function filtrarTabla() {
     const q   = (document.getElementById('searchInmuebles').value || '').toLowerCase();
     const tip = document.getElementById('filtroTipo').value.toLowerCase();
@@ -598,9 +588,7 @@ function filtrarTabla() {
 }
 document.getElementById('searchInmuebles').addEventListener('input', filtrarTabla);
 
-/* ────────────────────────────────────────
-   UPLOAD — preview imágenes
-──────────────────────────────────────── */
+/* UPLOAD — preview imágenes */
 const _dt = {};
 
 function previewImagenes(input, gridId) {
@@ -678,9 +666,7 @@ function onDropPlano(e, previewId, inputId) {
     previewPlano(input, previewId);
 }
 
-/* ────────────────────────────────────────
-   IMÁGENES EXISTENTES (editar)
-──────────────────────────────────────── */
+/* IMÁGENES EXISTENTES (editar) */
 let _imagenesAEliminar = [];
 
 function renderImagenesExistentes(imagenes) {
@@ -702,7 +688,6 @@ function renderImagenesExistentes(imagenes) {
     document.getElementById('conteoExistentes').textContent = '(' + imagenes.length + ')';
 
     imagenes.forEach(img => {
-        // Construir URL correcta: si ya es http(s), usarla tal cual; si no, prefijar SITE_URL
         const urlImg = (img.urlImagen && img.urlImagen.startsWith('http'))
             ? img.urlImagen
             : '<?php echo rtrim(SITE_URL,"/"); ?>/assets/uploads/inmuebles/' + img.urlImagen;
@@ -739,9 +724,7 @@ function marcarEliminarImagen(btn, idImagen) {
     }
 }
 
-/* ────────────────────────────────────────
-   PLANO EXISTENTE (editar)
-──────────────────────────────────────── */
+/* PLANO EXISTENTE (editar) */
 function renderPlanoActual(planos) {
     const div = document.getElementById('editPlanoActual');
     if (!planos || planos.length === 0) { div.innerHTML = ''; return; }
@@ -757,9 +740,7 @@ function renderPlanoActual(planos) {
         ${esImg ? `<img src="${url}" class="plano-preview-img" alt="plano actual">` : ''}`;
 }
 
-/* ────────────────────────────────────────
-   MODALES
-──────────────────────────────────────── */
+/* MODALES */
 function abrirModalCrearInmueble() {
     document.getElementById('formCrearInmueble').reset();
     document.getElementById('crearImgPreview').innerHTML = '';
@@ -768,8 +749,6 @@ function abrirModalCrearInmueble() {
     openModal('modalCrearInmueble');
 }
 
-// ✅ CORRECCIÓN PRINCIPAL: lee los datos desde data-attributes del <tr>
-// en vez de recibirlos como argumentos del onclick (que se rompía con URLs que tienen & ? etc.)
 function abrirModalEditarInmuebleDesdeRow(tr) {
     const d = tr.dataset;
 
@@ -792,7 +771,7 @@ function abrirModalEditarInmuebleDesdeRow(tr) {
     document.getElementById('inputImagenesEditar').value  = '';
     document.getElementById('inputPlanoEditar').value     = '';
 
-    // Cargar imágenes y plano existentes (JSON ya viene decodificado del data-attribute)
+    // Cargar imágenes y plano existentes 
     let imagenes = [], planos = [];
     try { imagenes = JSON.parse(d.imagenes); } catch(e) {}
     try { planos   = JSON.parse(d.planos);   } catch(e) {}

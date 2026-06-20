@@ -24,7 +24,7 @@ class Favorito {
 
         $sql = "INSERT INTO favoritos (usuario_id, inmueble_id) VALUES (?, ?)";
         $id = $this->db->insert($sql, [$usuarioId, $inmuebleId], "ii");
-        
+
         return ['success' => true, 'id' => $id];
     }
 
@@ -34,7 +34,7 @@ class Favorito {
     public function quitar($usuarioId, $inmuebleId) {
         $sql = "DELETE FROM favoritos WHERE usuario_id = ? AND inmueble_id = ?";
         $affected = $this->db->delete($sql, [$usuarioId, $inmuebleId], "ii");
-        
+
         return ['success' => $affected > 0];
     }
 
@@ -62,17 +62,19 @@ class Favorito {
 
     /**
      * Obtener favoritos de un usuario
+     * Ajustado a las columnas reales de Inmuebles (idInmueble, idPublicador, ubicacion, operacion...)
      */
     public function obtenerPorUsuario($usuarioId) {
-        $sql = "SELECT f.*, i.*, 
-                (SELECT url_imagen FROM imagenes_inmueble WHERE inmueble_id = i.id AND es_principal = 1 LIMIT 1) as imagen_principal,
+        $sql = "SELECT f.id as favorito_id,
+                i.idInmueble, i.titulo, i.descripcion, i.precio, i.ubicacion,
+                i.tipo, i.operacion, i.habitaciones, i.banos, i.area, i.estado,
                 u.nombre as publicador_nombre, u.apellido as publicador_apellido
                 FROM favoritos f
-                JOIN inmuebles i ON f.inmueble_id = i.id
-                JOIN usuarios u ON i.usuario_id = u.id
+                JOIN Inmuebles i ON f.inmueble_id = i.idInmueble
+                JOIN Usuarios u ON i.idPublicador = u.idUsuario
                 WHERE f.usuario_id = ?
-                ORDER BY f.fecha_agregado DESC";
-        
+                ORDER BY f.id DESC";
+
         return $this->db->select($sql, [$usuarioId], "i");
     }
 
@@ -103,4 +105,3 @@ class Favorito {
         return array_column($resultados, 'inmueble_id');
     }
 }
-?>

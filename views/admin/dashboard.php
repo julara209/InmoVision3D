@@ -32,6 +32,7 @@ $tab = in_array($_GET['tab'] ?? '', $tabsValidos) ? $_GET['tab'] : 'usuarios';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../Assets/img/logo.png" type="image/png" />
     <title>Panel de Administración - InmoVision3D</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/styles.css">
@@ -316,7 +317,7 @@ $tab = in_array($_GET['tab'] ?? '', $tabsValidos) ? $_GET['tab'] : 'usuarios';
 
 <!-- ═══ HEADER ═══ -->
 <header class="adm-header">
-    <a href="<?php echo SITE_URL; ?>index.php" class="adm-logo">
+    <a href="<?php echo SITE_URL; ?>/index.php" class="adm-logo">
         <img src="../../assets/img/logo.png" alt="InmoVision 3D logo">
         <span class="logo-text">InmoVision <span>3D</span></span>
     </a>

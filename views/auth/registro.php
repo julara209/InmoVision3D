@@ -171,7 +171,7 @@ unset($_SESSION['error']);
     <!-- Header -->
     <header class="header">
         <div class="header-container">
-            <a href="index.php" class="logo">
+            <a href="../../index.php" class="logo">
     <img 
         src="../../assets/img/logo.png" 
         alt="InmoVision 3D logo" 

@@ -24,6 +24,7 @@ if (isLoggedIn()) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Assets/img/logo.png" type="image/png" />
     <title>InmoVision 3D - Tu Hogar Ideal</title>
     <meta name="description" content="Explora propiedades con visualización 3D inmersiva. El futuro de la inmobiliaria está aquí.">
     <link rel="stylesheet" href="assets/css/styles.css">

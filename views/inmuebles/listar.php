@@ -39,6 +39,7 @@ if (isLoggedIn() && $favoritoModel) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../Assets/img/logo.png" type="image/png" />
     <title>Explorar Inmuebles - InmoVision 3D</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -47,7 +48,7 @@ if (isLoggedIn() && $favoritoModel) {
        <!-- Header -->
     <header class="header">
         <div class="header-container">
-            <a href="index.php" class="logo">
+            <a href="../../index.php" class="logo">
     <img 
         src="../../assets/img/logo.png" 
         alt="InmoVision 3D logo" 
