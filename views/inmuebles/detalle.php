@@ -18,6 +18,7 @@ $inmueble = $inmuebleModel->obtenerPorId($id);
 
 
 
+
 if (!$inmueble) {
     header('Location: listar.php');
     exit();
@@ -284,23 +285,25 @@ $totalFavoritos = $favoritoModel->contarPorInmueble($id);
                 <!-- Galería -->
                 <div class="galeria">
                     <?php 
-                    $imagenPrincipal = !empty($inmueble['imagenes']) 
-                        ? $inmueble['imagenes'][0]['urlImagen'] 
-                        : 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop';
+                    $imagenPrincipal = !empty($inmueble['imagenes']) ? SITE_URL . '/assets/uploads/inmuebles/' . $inmueble['imagenes'][0]['urlImagen']: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800';
                     ?>
                     <img src="<?php echo htmlspecialchars($imagenPrincipal); ?>" 
                          alt="<?php echo htmlspecialchars($inmueble['titulo']); ?>" 
                          class="galeria-principal" id="imagenPrincipal">
                     
                     <?php if (!empty($inmueble['imagenes']) && count($inmueble['imagenes']) > 1): ?>
-                        <div class="galeria-thumbs">
-                            <?php foreach ($inmueble['imagenes'] as $index => $imagen): ?>
-                                <img src="<?php echo htmlspecialchars($imagen['urlImagen']); ?>" 
-                                     alt="Imagen <?php echo $index + 1; ?>"
-                                     class="galeria-thumb <?php echo $index === 0 ? 'active' : ''; ?>"
-                                     onclick="cambiarImagen(this, '<?php echo htmlspecialchars($imagen['urlImagen']); ?>')">
-                            <?php endforeach; ?>
-                        </div>
+                        <?php foreach ($inmueble['imagenes'] as $index => $imagen): ?>
+
+<?php
+$rutaImagen = SITE_URL . '/assets/uploads/inmuebles/' . $imagen['urlImagen'];
+?>
+
+<img src="<?php echo htmlspecialchars($rutaImagen); ?>"
+     alt="Imagen <?php echo $index + 1; ?>"
+     class="galeria-thumb <?php echo $index === 0 ? 'active' : ''; ?>"
+     onclick="cambiarImagen(this, '<?php echo htmlspecialchars($rutaImagen); ?>')">
+
+<?php endforeach; ?>
                     <?php endif; ?>
                 </div>
 
@@ -456,39 +459,18 @@ $totalFavoritos = $favoritoModel->contarPorInmueble($id);
             <p>&copy; <?php echo date('Y'); ?> InmoVision 3D. Todos los derechos reservados.</p>
         </div>
     </footer>
-
-    <script>
-        // Favorito
-        document.getElementById('btnFavorito').addEventListener('click', async function() {
-            const inmuebleId = this.dataset.inmuebleId;
-            
-            try {
-                const response = await fetch('../../api/favoritos.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=toggle&inmueble_id=${inmuebleId}`
-                });
-
-                const data = await response.json();
-
-                if (data.require_login) {
-                    window.location.href = '../auth/login.php?redirect=' + encodeURIComponent(window.location.href);
-                    return;
-                }
-
-                if (data.success) {
-                    this.classList.toggle('active', data.is_favorite);
-                    const svg = this.querySelector('svg');
-                    svg.setAttribute('fill', data.is_favorite ? 'currentColor' : 'none');
-                    this.querySelector('span').textContent = data.is_favorite ? 'En favoritos' : 'Agregar a favoritos';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-    </script>
     <script src="../../assets/js/main.js"></script>
+    <script>
+function cambiarImagen(elemento, src) {
+
+    document.getElementById('imagenPrincipal').src = src;
+
+    document.querySelectorAll('.galeria-thumb').forEach(img => {
+        img.classList.remove('active');
+    });
+
+    elemento.classList.add('active');
+}
+</script>
 </body>
 </html>

@@ -64,8 +64,6 @@ arsort($porTipo);
 .rep-mi-amber  { background: rgba(245,158,11,0.12); color: #f59e0b; }
 .rep-mi-violet { background: rgba(139,92,246,0.12); color: #8b5cf6; }
 .rep-mi-rose   { background: rgba(244,63,94,0.12);  color: #f43f5e; }
-.rep-mi-sky    { background: rgba(56,189,248,0.12); color: #38bdf8; }
-.rep-mi-slate  { background: rgba(100,116,139,0.12);color: #64748b; }
 .rep-mi-orange { background: rgba(249,115,22,0.12); color: #f97316; }
 .rep-metric-num { font-size: 1.35rem; font-weight: 700; line-height: 1; }
 .rep-metric-lbl { font-size: .7rem; color: #64748b; margin-top: 2px; }
@@ -232,17 +230,6 @@ arsort($porTipo);
             <div class="rep-metric-card">
                 <div class="rep-metric-icon rep-mi-amber"><i class="fas fa-key"></i></div>
                 <div><div class="rep-metric-num"><?php echo $arrendados; ?></div><div class="rep-metric-lbl">Arrendados</div></div>
-            </div>
-            <div class="rep-metric-card">
-                <div class="rep-metric-icon rep-mi-slate"><i class="fas fa-pause"></i></div>
-                <div><div class="rep-metric-num"><?php echo $pausados; ?></div><div class="rep-metric-lbl">Pausados</div></div>
-            </div>
-            <div class="rep-metric-card">
-                <div class="rep-metric-icon rep-mi-sky"><i class="fas fa-chart-line"></i></div>
-                <div>
-                    <div class="rep-metric-num">$<?php echo number_format($precioPromedio / 1000000, 1); ?>M</div>
-                    <div class="rep-metric-lbl">Precio promedio</div>
-                </div>
             </div>
             <div class="rep-metric-card">
                 <div class="rep-metric-icon rep-mi-orange"><i class="fas fa-arrow-trend-up"></i></div>

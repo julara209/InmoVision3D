@@ -224,10 +224,10 @@ function chipInmueble($valor, $tipo) {
                         <div style="display:flex;align-items:center;gap:10px">
                             <div class="thumb-placeholder">
                                 <?php if ($primeraImg): ?>
-                                    <img src="<?php echo htmlspecialchars($primeraImg); ?>" alt="foto">
+                                <img src="<?php echo SITE_URL . '/assets/uploads/inmuebles/' . htmlspecialchars($primeraImg); ?>" alt="foto">
                                 <?php else: ?>
-                                    🏠
-                                <?php endif; ?>
+                                🏠
+                            <?php endif; ?>
                             </div>
                             <div>
                                 <div style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">

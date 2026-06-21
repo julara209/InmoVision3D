@@ -9,7 +9,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 if ($_SESSION['rol'] === 'cliente') {
-    header('Location: ' . SITE_URL . 'index.php');
+    header('Location: ' . SITE_URL . '/index.php');
     exit;
 }
 
@@ -772,8 +772,7 @@ document.addEventListener('click', () => dropdown?.classList.remove('open'));
 
 // ── Botones radio: TIPO ──
 initBtnRadio('tipo-btns', 'tipo-select', '<?php echo $inmueble['tipo'] ?? 'casa'; ?>');
-// ── Botones radio: ESTADO ──
-initBtnRadio('estado-btns', 'estado-select', '<?php echo $inmueble['estado'] ?? 'venta'; ?>');
+initBtnRadio('estado-btns', 'estado-select', '<?php echo $inmueble['operacion'] ?? 'venta'; ?>');
 
 function initBtnRadio(groupId, selectId, initialVal) {
     const group  = document.getElementById(groupId);

@@ -17,15 +17,17 @@ class Favorito {
      * Agregar a favoritos
      */
     public function agregar($usuarioId, $inmuebleId) {
-        // Verificar si ya existe
-        if ($this->existe($usuarioId, $inmuebleId)) {
-            return ['success' => false, 'error' => 'Ya está en favoritos'];
+        try {
+            $sql = "INSERT INTO favoritos (usuario_id, inmueble_id) VALUES (?, ?)";
+            $id = $this->db->insert($sql, [$usuarioId, $inmuebleId], "ii");
+            return ['success' => true, 'id' => $id];
+        } catch (Exception $e) {
+            // Choca con el UNIQUE (carrera de doble clic) -> ya estaba en favoritos
+            if (strpos($e->getMessage(), 'Duplicate entry') !== false) {
+                return ['success' => true, 'id' => null, 'ya_existia' => true];
+            }
+            return ['success' => false, 'error' => 'Error al guardar favorito'];
         }
-
-        $sql = "INSERT INTO favoritos (usuario_id, inmueble_id) VALUES (?, ?)";
-        $id = $this->db->insert($sql, [$usuarioId, $inmuebleId], "ii");
-
-        return ['success' => true, 'id' => $id];
     }
 
     /**
@@ -35,7 +37,7 @@ class Favorito {
         $sql = "DELETE FROM favoritos WHERE usuario_id = ? AND inmueble_id = ?";
         $affected = $this->db->delete($sql, [$usuarioId, $inmuebleId], "ii");
 
-        return ['success' => $affected > 0];
+        return ['success' => true, 'affected' => $affected];
     }
 
     /**
@@ -55,14 +57,16 @@ class Favorito {
             $this->quitar($usuarioId, $inmuebleId);
             return ['success' => true, 'action' => 'removed', 'is_favorite' => false];
         } else {
-            $this->agregar($usuarioId, $inmuebleId);
+            $resultado = $this->agregar($usuarioId, $inmuebleId);
+            if (!$resultado['success']) {
+                return ['success' => false, 'error' => $resultado['error']];
+            }
             return ['success' => true, 'action' => 'added', 'is_favorite' => true];
         }
     }
 
     /**
      * Obtener favoritos de un usuario
-     * Ajustado a las columnas reales de Inmuebles (idInmueble, idPublicador, ubicacion, operacion...)
      */
     public function obtenerPorUsuario($usuarioId) {
         $sql = "SELECT f.id as favorito_id,

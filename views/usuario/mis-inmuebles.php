@@ -541,7 +541,7 @@ function chipInmueble($valor, $tipo) {
     <div class="breadcrumb">
         <a href="<?php echo SITE_URL; ?>/index.php">Inicio</a>
         <span class="sep">›</span>
-        <a href="<?php echo SITE_URL; ?>/views/usuario/perfil.php">Mi cuenta</a>
+        <a href="<?php echo SITE_URL; ?>/views/usuario/perfil.php">Mi perfil</a>
         <span class="sep">›</span>
         <span class="current">Mis inmuebles</span>
     </div>
@@ -703,11 +703,11 @@ $pausados = count(array_filter($inmuebles, function($i) {
                         <td>
                             <div style="display:flex;align-items:center;gap:10px">
                                 <div class="thumb-placeholder">
-                                    <?php if ($primeraImg): ?>
-                                        <img src="<?php echo htmlspecialchars($primeraImg); ?>" alt="foto">
-                                    <?php else: ?>
-                                        🏠
-                                    <?php endif; ?>
+                                <?php if ($primeraImg): ?>
+                                <img src="<?php echo SITE_URL . '/assets/uploads/inmuebles/' . htmlspecialchars($primeraImg); ?>" alt="foto">
+                                <?php else: ?>
+                                🏠
+                            <?php endif; ?>
                                 </div>
                                 <div>
                                     <div style="font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">

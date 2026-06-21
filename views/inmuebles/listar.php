@@ -24,6 +24,7 @@ $filtros = array_filter($filtros);
 $filtros['estado'] = ESTADO_DISPONIBLE;
 
 $inmuebles = $inmuebleModel->listar($filtros);
+
 $total = $inmuebleModel->contar(['estado' => ESTADO_DISPONIBLE]);
 $totalPaginas = ceil($total / 12);
 $paginaActual = (int)($_GET['pagina'] ?? 1);
@@ -58,7 +59,7 @@ if (isLoggedIn() && $favoritoModel) {
 </a>
              <nav class="nav" id="mainNav">
                 <a href="<?php echo SITE_URL; ?>/index.php" class="nav-link">Inicio</a>
-                <a href="listar.php" class="nav-link" class="active"> Inmuebles</a>
+                <a href="listar.php" class="nav-link active"> Inmuebles</a>
                 <?php if (isPublicador()): ?>
                     <a href="publicar.php" class="nav-link">Publicar</a>
                 <?php endif; ?>
@@ -140,7 +141,7 @@ if (isLoggedIn() && $favoritoModel) {
                     <?php foreach ($inmuebles as $inmueble): ?>
                         <?php 
                         $esFavorito = in_array($inmueble['idInmueble'], $favoritosIds);
-                        $imagenPrincipal = $inmueble['imagen_principal'] ?? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop';
+                        $imagenPrincipal = SITE_URL . '/assets/uploads/inmuebles/' . $inmueble['imagen_principal'];
                         ?>
                         <div class="inmueble-card">
                             <div class="card-image">

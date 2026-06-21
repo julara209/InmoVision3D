@@ -1,6 +1,4 @@
-/**
- * InmoVision 3D - JavaScript Principal
- */
+/*InmoVision 3D - JavaScript Principal*/
 
 document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
@@ -13,9 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initAlerts();
 });
 
-/**
- * Menú móvil
- */
+/* Menú móvil*/
 function initMobileMenu() {
     const menuToggle = document.getElementById('menuToggle');
     const nav = document.getElementById('mainNav');
@@ -37,9 +33,7 @@ function initMobileMenu() {
     }
 }
 
-/**
- * Menú dropdown del perfil
- */
+/* Menú dropdown del perfil*/
 function initDropdownMenu() {
     const profileNav = document.getElementById('profileNav');
     const dropdownMenu = document.getElementById('dropdownMenu');
@@ -58,9 +52,7 @@ function initDropdownMenu() {
     }
 }
 
-/**
- * Sistema de favoritos
- */
+/* Sistema de favoritos*/
 function initFavorites() {
     const favoriteButtons = document.querySelectorAll('.btn-favorite');
 
@@ -369,3 +361,70 @@ function createInmuebleCard(inmueble) {
     `;
     return card;
 }
+
+function cambiarImagen(elemento, src) {
+    document.getElementById('imagenPrincipal').src = src;
+}
+// === Favoritos: lógica centralizada (corazón en cards + botón grande en detalle) ===
+function inicializarFavoritos() {
+    document.addEventListener('click', function (e) {
+        const boton = e.target.closest('.btn-favorite, .btn-favorito-lg');
+        if (!boton) return;
+        e.preventDefault();
+        toggleFavorito(boton);
+    });
+
+    // Si venimos de un login con una intención de favorito pendiente, la disparamos
+    const pendienteId = sessionStorage.getItem('favoritoPendiente');
+    if (pendienteId) {
+        sessionStorage.removeItem('favoritoPendiente');
+        const boton = document.querySelector(
+            `[data-inmueble-id="${pendienteId}"].btn-favorite, [data-inmueble-id="${pendienteId}"].btn-favorito-lg`
+        );
+        if (boton) toggleFavorito(boton);
+    }
+}
+
+async function toggleFavorito(boton) {
+    if (boton.dataset.loading === '1') return; // evita doble clic mientras carga
+    boton.dataset.loading = '1';
+    boton.disabled = true;
+
+    const inmuebleId = boton.dataset.inmuebleId;
+
+    try {
+        const response = await fetch('/InmoVision3D/Api/FavoritosApi.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `action=toggle&inmueble_id=${inmuebleId}`
+        });
+        const data = await response.json();
+
+        if (data.require_login) {
+            sessionStorage.setItem('favoritoPendiente', inmuebleId);
+            window.location.href = '/InmoVision3D/views/auth/login.php?redirect='
+                + encodeURIComponent(window.location.href);
+            return;
+        }
+
+        if (data.success) {
+            actualizarUIFavorito(boton, data.is_favorite);
+        }
+    } catch (error) {
+        console.error('Error favoritos:', error);
+    } finally {
+        boton.dataset.loading = '0';
+        boton.disabled = false;
+    }
+}
+
+function actualizarUIFavorito(boton, esFavorito) {
+    boton.classList.toggle('active', esFavorito);
+    const svg = boton.querySelector('svg');
+    if (svg) svg.setAttribute('fill', esFavorito ? 'currentColor' : 'none');
+    const span = boton.querySelector('span');
+    if (span) span.textContent = esFavorito ? 'En favoritos' : 'Agregar a favoritos';
+    boton.title = esFavorito ? 'Quitar de favoritos' : 'Agregar a favoritos';
+}
+
+document.addEventListener('DOMContentLoaded', inicializarFavoritos);
