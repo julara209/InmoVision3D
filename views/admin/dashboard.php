@@ -1,7 +1,6 @@
 <?php
 /**
  * Dashboard de Administrador - InmoVision3D
- * Shell principal: incluye sub-páginas según tab activo
  */
 session_start();
 require_once __DIR__ . '/../../config/config.php';
@@ -9,7 +8,6 @@ require_once __DIR__ . '/../../models/Usuario.php';
 require_once __DIR__ . '/../../models/Inmueble.php';
 require_once __DIR__ . '/../../models/Solicitud.php';
 
-// Acepta tanto 'admin' como 'administrador' según cómo lo guarde tu BD
 if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['rol'], ['admin', 'administrador'])) {
     header('Location: ' . SITE_URL . 'views/auth/login.php');
     exit;
