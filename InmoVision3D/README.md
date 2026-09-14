@@ -288,7 +288,7 @@ tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
 
 #### Actor: Cliente
 
-![Diagrama de casos de uso - Cliente](https://drive.google.com/file/d/1JQ-_6m1guDs2UeusqOvN1JZ50oxDVBb8/view?usp=sharing)
+![Diagrama de casos de uso - Cliente](https://drive.google.com/uc?export=view&id=1JQ-_6m1guDs2UeusqOvN1JZ50oxDVBb8)
 
 | Caso de uso | Descripción |
 |---|---|
@@ -300,7 +300,7 @@ tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
 
 #### Actor: Publicador
 
-![Diagrama de casos de uso - Publicador](https://drive.google.com/file/d/1NiOt4LYw9CSOxDhzpILqbxs2n75RVKCB/view?usp=sharing)
+![Diagrama de casos de uso - Publicador](https://drive.google.com/uc?export=view&id=1NiOt4LYw9CSOxDhzpILqbxs2n75RVKCB)
 
 | Caso de uso | Descripción |
 |---|---|
@@ -313,7 +313,7 @@ tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
 
 #### Actor: Administrador
 
-![Diagrama de casos de uso - Administrador](https://drive.google.com/file/d/1A2tgpthTU5liP6rJeCy8XNEyZotY0bTD/view?usp=sharing)
+![Diagrama de casos de uso - Administrador](https://drive.google.com/uc?export=view&id=1A2tgpthTU5liP6rJeCy8XNEyZotY0bTD)
 
 | Caso de uso | Descripción |
 |---|---|
@@ -325,7 +325,7 @@ tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
 
 ### Arquitectura de componentes
 
-![Diagrama de componentes](https://drive.google.com/file/d/1MGxG8NstTXxwqG79tKPREJ6MGtfonLyG/view?usp=sharing)
+![Diagrama de componentes](https://drive.google.com/uc?export=view&id=1MGxG8NstTXxwqG79tKPREJ6MGtfonLyG)
 
 El sistema se organiza en los siguientes componentes de negocio, todos con dependencia hacia la **Base de datos**:
 
@@ -340,7 +340,7 @@ El sistema se organiza en los siguientes componentes de negocio, todos con depen
 
 ### Arquitectura de despliegue
 
-![Diagrama de despliegue](https://drive.google.com/file/d/1nd3TJpYRo0jvDoROHGygjmZkmVocXsy0/view?usp=sharing)
+![Diagrama de despliegue](https://drive.google.com/uc?export=view&id=1nd3TJpYRo0jvDoROHGygjmZkmVocXsy0)
 
 El sistema sigue una arquitectura en tres capas:
 
@@ -357,7 +357,7 @@ Navegador  --HTTPS-->  Servidor Web (Frontend)  --API REST-->  Aplicación  --SQ
 
 ### Arquitectura de paquetes
 
-![Diagrama de paquetes](https://drive.google.com/file/d/19nk7fUs7Vfoj27SDS7PF-ZVUqdKk_Z-s/view?usp=sharing)
+![Diagrama de paquetes](https://drive.google.com/uc?export=view&id=19nk7fUs7Vfoj27SDS7PF-ZVUqdKk_Z-s)
 
 El código de la aplicación se organiza en cuatro paquetes principales:
 
@@ -368,7 +368,7 @@ El código de la aplicación se organiza en cuatro paquetes principales:
 
 ### Diagrama de clases
 
-![Diagrama de clases](https://drive.google.com/file/d/1B6hMYBhKjXgsgNTSgdh1rQCcHEUEgZQU/view?usp=sharing)
+![Diagrama de clases](https://drive.google.com/uc?export=view&id=1B6hMYBhKjXgsgNTSgdh1rQCcHEUEgZQU)
 
 **Clases principales:**
 
@@ -395,7 +395,7 @@ Inmueble *posee* Modelo 3D  1 a 1
 
 ### Modelo entidad-relación
 
-![Modelo entidad-relación](https://drive.google.com/file/d/17z6anOpK6Po3IcgK0QJ_llz8W02sltUG/view?usp=sharing)
+![Modelo entidad-relación](https://drive.google.com/uc?export=view&id=17z6anOpK6Po3IcgK0QJ_llz8W02sltUG)
 
 **Entidades y atributos principales:**
 
@@ -419,7 +419,6 @@ Inmueble *posee* Modelo 3D  1 a 1
 | Tiene | Inmuebles – Imagenes | 1:N – 1:1 |
 | Tiene | Inmuebles – Planos 2D | 1:1 – 1:1 |
 | Representa | Modelos 3D – Inmuebles | 1:1 – 1:1 |
-- **Por publicador**: resumen de inmuebles agrupados por publicador.
 
 Los filtros son multicriterio y combinables: estado, tipo de operación (venta/arriendo),
 tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
