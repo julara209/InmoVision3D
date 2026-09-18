@@ -3,18 +3,13 @@ spring:
     name: InmoVision3D
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/inmovision3d
+    url: jdbc:mariadb://localhost:3307/inmovision3d
     username: root
     password: ""
 
   jpa:
     hibernate:
       ddl-auto: update
-    # true (por defecto en Spring Boot): mantiene la sesión de Hibernate abierta
-    # durante el renderizado de la vista, para que Thymeleaf pueda acceder sin
-    # problema a colecciones @OneToMany "lazy" (imagenes, planos, favoritos, etc.)
-    # que se recorren directamente en los templates. Con "false" se rompe con
-    # LazyInitializationException apenas hay datos reales.
     open-in-view: true
     database-platform: org.hibernate.dialect.MariaDBDialect
     show-sql: true
@@ -28,9 +23,10 @@ spring:
       max-request-size: 25MB
 
 app:
-  # Carpeta (relativa al directorio de trabajo del proceso) donde se guardan
-  # las imágenes y planos subidos. Se sirve públicamente bajo /uploads/**.
-  upload-dir: uploads
+  # Las imágenes de inmuebles y los planos se guardan aquí:
+  #   src/main/resources/static/uploads/inmuebles
+  #   src/main/resources/static/uploads/planos
+  upload-dir: src/main/resources/static/uploads
 
 server:
   port: 8080

@@ -13,37 +13,37 @@
                 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: #0f172a;
-            color: #f1f5f9;
+            background: var(--color-dark);
+            color: var(--color-light);
             min-height: 100vh;
         }
 
         /* ── HEADER ── */
         .adm-header {
             position: sticky; top: 0; z-index: 100;
-            background: rgba(15,23,42,0.97);
+            background: var(--header-bg);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            border-bottom: 1px solid var(--overlay-3);
             display: flex; align-items: center; justify-content: space-between;
             padding: 0 3rem; height: 70px;
         }
         .adm-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
         .adm-logo img { width: 50px; height: 50px; border-radius: 8px; object-fit: contain; }
-        .adm-logo .logo-text { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; }
+        .adm-logo .logo-text { font-size: 1.4rem; font-weight: 700; color: var(--color-light); }
         .adm-logo .logo-text span {
             background: linear-gradient(135deg, #0ea5e9, #f97316);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
         .adm-header-nav { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; margin-right: 1rem; }
-        .adm-header-nav a { color: #94a3b8; text-decoration: none; font-size: 1rem; font-weight: 500; transition: color .2s; }
-        .adm-header-nav a:hover { color: #f1f5f9; }
+        .adm-header-nav a { color: var(--color-gray-light); text-decoration: none; font-size: 1rem; font-weight: 500; transition: color .2s; }
+        .adm-header-nav a:hover { color: var(--color-light); }
         .adm-header-nav a.active { color: #0ea5e9; }
 
         .adm-profile {
             position: relative; display: flex; align-items: center; gap: 8px;
             cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: background .2s;
         }
-        .adm-profile:hover { background: rgba(255,255,255,0.06); }
+        .adm-profile:hover { background: var(--overlay-3); }
         .adm-profile .avatar {
             width: 34px; height: 34px; border-radius: 50%;
             background: rgba(14,165,233,0.2); color: #0ea5e9;
@@ -55,18 +55,18 @@
 
         .adm-dropdown {
             display: none; position: absolute; top: calc(100% + 8px); right: 0;
-            min-width: 190px; background: #1e293b;
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-            overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 200;
+            min-width: 190px; background: var(--color-dark-light);
+            border: 1px solid var(--overlay-4); border-radius: 10px;
+            overflow: hidden; box-shadow: 0 8px 32px var(--shadow-menu); z-index: 200;
         }
         .adm-dropdown.open { display: block; }
         .adm-dropdown a {
-            display: block; padding: 11px 16px; color: #94a3b8;
+            display: block; padding: 11px 16px; color: var(--color-gray-light);
             text-decoration: none; font-size: 1rem; transition: background .15s, color .15s;
         }
-        .adm-dropdown a:hover { background: rgba(255,255,255,0.07); color: #f1f5f9; }
+        .adm-dropdown a:hover { background: var(--overlay-3); color: var(--color-light); }
         .adm-dropdown a.active { color: #0ea5e9; background: rgba(14,165,233,0.1); }
-        .adm-dropdown hr { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 4px 0; }
+        .adm-dropdown hr { border: none; border-top: 1px solid var(--overlay-3); margin: 4px 0; }
 
         @media (max-width: 768px) {
             .adm-header { padding: 0 1rem; }
@@ -74,28 +74,28 @@
         }
 
         main { max-width:1100px; margin:0 auto; padding:2rem; }
-        .breadcrumb { font-size:.8rem; color:#64748b; margin-bottom:1.2rem; }
-        .breadcrumb a { color:#64748b; text-decoration:none; }
+        .breadcrumb { font-size:.8rem; color:var(--color-gray); margin-bottom:1.2rem; }
+        .breadcrumb a { color:var(--color-gray); text-decoration:none; }
         .sol-title { display:flex; align-items:center; gap:1rem; margin-bottom:1.8rem; }
         .sol-title i { font-size:1.8rem; background:linear-gradient(135deg,#0ea5e9,#f97316);
                         -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
         .sol-title h1 { margin:0; font-size:1.5rem; }
-        .sol-title p { margin:.2rem 0 0; color:#94a3b8; font-size:.85rem; }
+        .sol-title p { margin:.2rem 0 0; color:var(--color-gray-light); font-size:.85rem; }
 
-        .card { background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:14px;
+        .card { background:var(--overlay-1); border:1px solid var(--overlay-3); border-radius:14px;
                 padding:1.5rem; margin-bottom:1.6rem; }
         .card h2 { margin:0 0 1rem; font-size:1.05rem; display:flex; align-items:center; gap:.5rem; }
 
-        .nueva-form textarea { width:100%; min-height:90px; background:#0f172a; border:1px solid rgba(255,255,255,0.1);
-                                border-radius:8px; color:#e2e8f0; padding:.7rem; font-family:inherit; resize:vertical; }
+        .nueva-form textarea { width:100%; min-height:90px; background:var(--color-dark); border:1px solid var(--overlay-4);
+                                border-radius:8px; color:var(--color-text-soft); padding:.7rem; font-family:inherit; resize:vertical; }
         .nueva-form .cita-row { display:flex; gap:.7rem; margin-top:.8rem; flex-wrap:wrap; }
         .nueva-form .cita-campo { flex:1; min-width:150px; }
-        .nueva-form .cita-campo label { display:block; font-size:.75rem; color:#94a3b8; margin-bottom:.3rem; }
-        .nueva-form .cita-campo input { width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.1);
-                                         border-radius:8px; color:#e2e8f0; padding:.6rem .7rem; font-family:inherit; }
-        .nueva-form .cita-hint { font-size:.72rem; color:#64748b; margin-top:.35rem; }
+        .nueva-form .cita-campo label { display:block; font-size:.75rem; color:var(--color-gray-light); margin-bottom:.3rem; }
+        .nueva-form .cita-campo input { width:100%; background:var(--color-dark); border:1px solid var(--overlay-4);
+                                         border-radius:8px; color:var(--color-text-soft); padding:.6rem .7rem; font-family:inherit; }
+        .nueva-form .cita-hint { font-size:.72rem; color:var(--color-gray); margin-top:.35rem; }
         .nueva-form .inmueble-mini { display:flex; gap:.8rem; align-items:center; margin-bottom:1rem;
-                                      background:#0f172a; border-radius:10px; padding:.7rem; }
+                                      background:var(--color-dark); border-radius:10px; padding:.7rem; }
         .nueva-form .inmueble-mini img { width:60px; height:60px; object-fit:cover; border-radius:8px; }
         .nueva-form button { margin-top:.8rem; background:linear-gradient(135deg,#0ea5e9,#0284c7); color:#fff; border:none;
                               padding:.6rem 1.3rem; border-radius:8px; font-weight:600; cursor:pointer; }
@@ -103,9 +103,9 @@
 
         table.sol-table { width:100%; border-collapse:collapse; }
         .sol-table th { text-align:left; font-size:.72rem; text-transform:uppercase; letter-spacing:.04em;
-                        color:#64748b; padding:.7rem .6rem; border-bottom:1px solid rgba(255,255,255,0.06); }
-        .sol-table td { padding:.8rem .6rem; border-bottom:1px solid rgba(255,255,255,0.04); font-size:.85rem; vertical-align:top; }
-        .sol-msg { max-width:260px; color:#94a3b8; }
+                        color:var(--color-gray); padding:.7rem .6rem; border-bottom:1px solid var(--overlay-3); }
+        .sol-table td { padding:.8rem .6rem; border-bottom:1px solid var(--overlay-2); font-size:.85rem; vertical-align:top; }
+        .sol-msg { max-width:260px; color:var(--color-gray-light); }
         .chip { padding:.2rem .6rem; border-radius:20px; font-size:.72rem; font-weight:600; }
         .chip-pendiente { background:rgba(245,158,11,0.15); color:#f59e0b; }
         .chip-aceptada  { background:rgba(34,197,94,0.15); color:#22c55e; }
@@ -113,8 +113,9 @@
         .btn-accion { border:none; border-radius:6px; padding:.35rem .7rem; font-size:.78rem; font-weight:600; cursor:pointer; margin-right:.3rem; }
         .btn-aceptar { background:rgba(34,197,94,0.15); color:#22c55e; }
         .btn-rechazar { background:rgba(239,68,68,0.15); color:#ef4444; }
-        .empty-row { text-align:center; color:#64748b; padding:2rem; }
+        .empty-row { text-align:center; color:var(--color-gray); padding:2rem; }
     </style>
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body>
 
@@ -169,7 +170,7 @@
             <img th:src="${inmuebleNuevaSolicitud.imagenPrincipalUrl}" th:if="${!inmuebleNuevaSolicitud.imagenes.isEmpty()}" alt="">
             <div>
                 <div style="font-weight:600" th:text="${inmuebleNuevaSolicitud.titulo}">Título</div>
-                <div style="font-size:.8rem;color:#94a3b8" th:text="${inmuebleNuevaSolicitud.direccion}">Dirección</div>
+                <div style="font-size:.8rem;color:var(--color-gray-light)" th:text="${inmuebleNuevaSolicitud.direccion}">Dirección</div>
             </div>
         </div>
         <textarea id="mensajeNueva" placeholder="Escribe tu mensaje para el publicador (por ejemplo: horarios disponibles para visitar, dudas sobre el inmueble, etc.)"></textarea>
@@ -206,14 +207,14 @@
                 <tr th:each="s : ${solicitudesEnviadas}"
                     th:with="chipEst=${s.estado.name() == 'PENDIENTE' ? 'chip-pendiente' : (s.estado.name() == 'ACEPTADA' ? 'chip-aceptada' : 'chip-rechazada')}">
                     <td>
-                        <a th:if="${s.inmueble != null}" th:href="@{'/inmuebles/' + ${s.inmueble.id}}" style="color:#e2e8f0;text-decoration:none;font-weight:500"
+                        <a th:if="${s.inmueble != null}" th:href="@{'/inmuebles/' + ${s.inmueble.id}}" style="color:var(--color-text-soft);text-decoration:none;font-weight:500"
                            th:text="${s.inmueble.titulo}">Título</a>
                     </td>
                     <td class="sol-msg" th:text="${s.mensaje}">Mensaje</td>
-                    <td style="color:#94a3b8;font-size:.78rem"
+                    <td style="color:var(--color-gray-light);font-size:.78rem"
                         th:text="${s.fechaCita != null ? #temporals.format(s.fechaCita, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                     <td><span class="chip" th:classappend="${chipEst}" th:text="${s.estado}">Estado</span></td>
-                    <td style="color:#64748b;font-size:.78rem"
+                    <td style="color:var(--color-gray);font-size:.78rem"
                         th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                 </tr>
             </tbody>
@@ -236,13 +237,13 @@
                     <td th:text="${s.inmueble != null ? s.inmueble.titulo : '—'}">Título</td>
                     <td th:text="${s.usuario != null ? s.usuario.nombre + ' ' + (s.usuario.apellido ?: '') : '—'}">Cliente</td>
                     <td class="sol-msg" th:text="${s.mensaje}">Mensaje</td>
-                    <td style="color:#94a3b8;font-size:.78rem"
+                    <td style="color:var(--color-gray-light);font-size:.78rem"
                         th:text="${s.fechaCita != null ? #temporals.format(s.fechaCita, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                     <td class="celda-estado"><span class="chip" th:classappend="${chipEst}" th:text="${s.estado}">Estado</span></td>
-                    <td style="color:#64748b;font-size:.78rem"
+                    <td style="color:var(--color-gray);font-size:.78rem"
                         th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                     <td class="celda-acciones">
-                        <span th:if="${s.estado.name() != 'PENDIENTE'}" style="color:#64748b;font-size:.78rem">—</span>
+                        <span th:if="${s.estado.name() != 'PENDIENTE'}" style="color:var(--color-gray);font-size:.78rem">—</span>
                         <button th:if="${s.estado.name() == 'PENDIENTE'}" class="btn-accion btn-aceptar"
                                 th:onclick="|cambiarEstadoSolicitud(${s.id}, 'ACEPTADA', this)|">Aceptar</button>
                         <button th:if="${s.estado.name() == 'PENDIENTE'}" class="btn-accion btn-rechazar"
@@ -332,7 +333,7 @@ async function cambiarEstadoSolicitud(id, estado, btn) {
             const chipClass = estado === 'ACEPTADA' ? 'chip-aceptada' : 'chip-rechazada';
             fila.querySelector('.celda-estado').innerHTML =
                 `<span class="chip ${chipClass}">${estado}</span>`;
-            fila.querySelector('.celda-acciones').innerHTML = '<span style="color:#64748b;font-size:.78rem">—</span>';
+            fila.querySelector('.celda-acciones').innerHTML = '<span style="color:var(--color-gray);font-size:.78rem">—</span>';
         } else {
             alert('No se pudo actualizar la solicitud');
             botones.forEach(b => b.disabled = false);

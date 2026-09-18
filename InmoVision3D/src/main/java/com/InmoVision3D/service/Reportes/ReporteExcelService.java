@@ -15,11 +15,30 @@ import java.util.List;
  * Genera los 4 reportes del Centro de reportes en formato Excel (.xlsx):
  * inventario general (listado), por tipo de inmueble, análisis de
  * precios y por publicador.
+ *
+ * PATRÓN GoF: Strategy — implementación concreta para el formato "excel".
+ * Ver {@link ReporteExporter} y {@link ReporteExporterFactory}.
  */
 @Service
-public class ReporteExcelService {
+public class ReporteExcelService implements ReporteExporter {
+
+    @Override
+    public String getFormato() {
+        return "excel";
+    }
+
+    @Override
+    public String getExtension() {
+        return "xlsx";
+    }
+
+    @Override
+    public String getContentType() {
+        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    }
 
     // ═══════════════════ INVENTARIO GENERAL (listado) ═══════════════════
+    @Override
     public void generar(List<Inmueble> inmuebles, OutputStream out) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Inmuebles");
@@ -46,6 +65,7 @@ public class ReporteExcelService {
     }
 
     // ═══════════════════ POR TIPO DE INMUEBLE ═══════════════════
+    @Override
     public void generarPorTipo(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Por tipo");
@@ -69,6 +89,7 @@ public class ReporteExcelService {
     }
 
     // ═══════════════════ ANALISIS DE PRECIOS ═══════════════════
+    @Override
     public void generarAnalisisPrecios(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Analisis de precios");
@@ -93,6 +114,7 @@ public class ReporteExcelService {
     }
 
     // ═══════════════════ POR PUBLICADOR ═══════════════════
+    @Override
     public void generarPorPublicador(List<ResumenPublicadorDTO> resumen, OutputStream out) throws IOException {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Por publicador");

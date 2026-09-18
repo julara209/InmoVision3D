@@ -62,13 +62,10 @@ public class UsuarioViewController {
                                    @RequestParam(required = false) String telefono,
                                    RedirectAttributes redirectAttributes) {
         Usuario actual = usuarioService.obtenerPorEmail(authentication.getName());
-        Usuario datos = new Usuario();
-        datos.setNombre(nombre.trim());
-        datos.setApellido(apellido.trim());
-        datos.setEmail(email.trim());
-        datos.setTelefono(telefono != null ? telefono.trim() : null);
         try {
-            usuarioService.actualizar(actual.getId(), datos);
+            // Se usa actualizarPerfil (y no actualizar) para que el rol no se toque:
+            // un publicador o un administrador que edite su perfil debe conservarlo.
+            usuarioService.actualizarPerfil(actual.getId(), nombre, apellido, email, telefono);
             redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("error", "Error al actualizar el perfil: " + e.getMessage());

@@ -10,6 +10,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,17 +24,47 @@ import java.util.List;
  *
  * Soporta los 4 reportes del Centro de reportes: inventario general
  * (listado), por tipo de inmueble, análisis de precios y por publicador.
+ *
+ * PATRÓN GoF: Strategy — implementación concreta para el formato "pdf".
+ * Ver {@link ReporteExporter} y {@link ReporteExporterFactory}. La
+ * interfaz declara sus métodos con "throws IOException", así que aquí se
+ * atrapa la {@link DocumentException} propia de OpenPDF y se reempaqueta
+ * como IOException; el resto de la lógica de generación no cambia.
  */
 @Service
-public class ReportePdfService {
+public class ReportePdfService implements ReporteExporter {
 
     private static final Color AZUL = new Color(2, 132, 199);
     private static final Color GRIS_OSCURO = new Color(15, 23, 42);
     private static final Color GRIS_TEXTO = new Color(100, 116, 139);
     private static final Color FILA_ALTERNA = new Color(241, 245, 249);
 
+    @Override
+    public String getFormato() {
+        return "pdf";
+    }
+
+    @Override
+    public String getExtension() {
+        return "pdf";
+    }
+
+    @Override
+    public String getContentType() {
+        return "application/pdf";
+    }
+
     // ═══════════════════ INVENTARIO GENERAL (listado) ═══════════════════
-    public void generar(List<Inmueble> inmuebles, OutputStream out) throws DocumentException {
+    @Override
+    public void generar(List<Inmueble> inmuebles, OutputStream out) throws IOException {
+        try {
+            generarInterno(inmuebles, out);
+        } catch (DocumentException e) {
+            throw new IOException("Error generando el PDF de inventario: " + e.getMessage(), e);
+        }
+    }
+
+    private void generarInterno(List<Inmueble> inmuebles, OutputStream out) throws DocumentException {
         Document document = iniciarDocumento(out, "InmoVision 3D - Reporte de Inventario");
 
         PdfPTable tabla = crearTablaConEncabezado(
@@ -58,7 +89,16 @@ public class ReportePdfService {
     }
 
     // ═══════════════════ POR TIPO DE INMUEBLE ═══════════════════
-    public void generarPorTipo(List<EstadisticaTipoDTO> stats, OutputStream out) throws DocumentException {
+    @Override
+    public void generarPorTipo(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
+        try {
+            generarPorTipoInterno(stats, out);
+        } catch (DocumentException e) {
+            throw new IOException("Error generando el PDF por tipo: " + e.getMessage(), e);
+        }
+    }
+
+    private void generarPorTipoInterno(List<EstadisticaTipoDTO> stats, OutputStream out) throws DocumentException {
         Document document = iniciarDocumento(out, "InmoVision 3D - Reporte por Tipo de Inmueble");
 
         PdfPTable tabla = crearTablaConEncabezado(
@@ -80,7 +120,16 @@ public class ReportePdfService {
     }
 
     // ═══════════════════ ANALISIS DE PRECIOS ═══════════════════
-    public void generarAnalisisPrecios(List<EstadisticaTipoDTO> stats, OutputStream out) throws DocumentException {
+    @Override
+    public void generarAnalisisPrecios(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
+        try {
+            generarAnalisisPreciosInterno(stats, out);
+        } catch (DocumentException e) {
+            throw new IOException("Error generando el PDF de analisis de precios: " + e.getMessage(), e);
+        }
+    }
+
+    private void generarAnalisisPreciosInterno(List<EstadisticaTipoDTO> stats, OutputStream out) throws DocumentException {
         Document document = iniciarDocumento(out, "InmoVision 3D - Analisis de Precios por Tipo");
 
         PdfPTable tabla = crearTablaConEncabezado(
@@ -103,7 +152,16 @@ public class ReportePdfService {
     }
 
     // ═══════════════════ POR PUBLICADOR ═══════════════════
-    public void generarPorPublicador(List<ResumenPublicadorDTO> resumen, OutputStream out) throws DocumentException {
+    @Override
+    public void generarPorPublicador(List<ResumenPublicadorDTO> resumen, OutputStream out) throws IOException {
+        try {
+            generarPorPublicadorInterno(resumen, out);
+        } catch (DocumentException e) {
+            throw new IOException("Error generando el PDF por publicador: " + e.getMessage(), e);
+        }
+    }
+
+    private void generarPorPublicadorInterno(List<ResumenPublicadorDTO> resumen, OutputStream out) throws DocumentException {
         Document document = iniciarDocumento(out, "InmoVision 3D - Reporte por Publicador");
 
         PdfPTable tabla = crearTablaConEncabezado(

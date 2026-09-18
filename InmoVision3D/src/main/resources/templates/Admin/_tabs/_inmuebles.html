@@ -4,16 +4,16 @@
     .chip-venta    { background: rgba(14,165,233,0.15);  color: #0ea5e9; }
     .chip-disp     { background: rgba(34,197,94,0.15);   color: #22c55e; }
     .chip-vendido  { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
-    .chip-pausado  { background: rgba(100,116,139,0.15); color: #64748b; }
+    .chip-pausado  { background: rgba(100,116,139,0.15); color: var(--color-gray); }
 
     .filter-bar { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
     .filter-bar select {
-        background:#0f172a; border:1px solid rgba(255,255,255,0.1);
-        border-radius:8px; padding:8px 12px; color:#94a3b8;
+        background:var(--color-dark); border:1px solid var(--overlay-4);
+        border-radius:8px; padding:8px 12px; color:var(--color-gray-light);
         font-family:inherit; font-size:0.8rem; cursor:pointer; transition:border-color .2s;
     }
     .filter-bar select:focus { outline:none; border-color:#0ea5e9; }
-    .filter-bar select option { background:#1e293b; }
+    .filter-bar select option { background:var(--color-dark-light); }
     .price-cell { color:#0ea5e9; font-weight:600; }
     .thumb-placeholder {
         width:40px; height:40px; border-radius:8px;
@@ -25,7 +25,7 @@
 
     /* ── Upload zone ── */
     .upload-zone {
-        border: 2px dashed rgba(255,255,255,0.12); border-radius:10px;
+        border: 2px dashed var(--overlay-4); border-radius:10px;
         padding:1.5rem; text-align:center; cursor:pointer;
         transition:border-color .2s, background .2s; position:relative;
     }
@@ -36,7 +36,7 @@
         position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
     }
     .upload-zone-icon { font-size:1.8rem; margin-bottom:.5rem; }
-    .upload-zone p { font-size:.8rem; color:#64748b; }
+    .upload-zone p { font-size:.8rem; color:var(--color-gray); }
     .upload-zone strong { color:#0ea5e9; }
 
     /* ── Preview grid ── */
@@ -46,8 +46,8 @@
     }
     .img-preview-item {
         position:relative; border-radius:8px; overflow:hidden;
-        aspect-ratio:1; background:#0f172a;
-        border:1px solid rgba(255,255,255,0.08);
+        aspect-ratio:1; background:var(--color-dark);
+        border:1px solid var(--overlay-3);
     }
     .img-preview-item img { width:100%; height:100%; object-fit:cover; display:block; }
     .img-preview-item .img-remove {
@@ -61,7 +61,7 @@
     .img-preview-item:hover .img-remove { opacity:1; }
     .img-preview-item .img-badge {
         position:absolute; bottom:3px; left:3px;
-        background:rgba(0,0,0,0.6); color:#fff;
+        background:var(--shadow-menu); color:#fff;
         font-size:.55rem; padding:1px 5px; border-radius:4px;
     }
 
@@ -71,14 +71,14 @@
 
     /* Divider en modal */
     .modal-divider {
-        border:none; border-top:1px solid rgba(255,255,255,0.07);
+        border:none; border-top:1px solid var(--overlay-3);
         margin:1.25rem 0;
     }
 
     /* Textarea heredado */
     .form-group textarea {
-        background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:8px;
-        padding:10px 12px; color:#f1f5f9; font-family:inherit; font-size:.875rem;
+        background:var(--color-dark); border:1px solid var(--overlay-4); border-radius:8px;
+        padding:10px 12px; color:var(--color-light); font-family:inherit; font-size:.875rem;
         width:100%; resize:vertical; transition:border-color .2s;
     }
     .form-group textarea:focus { outline:none; border-color:#0ea5e9; }
@@ -96,10 +96,10 @@
     .plano-upload-area input[type=file] {
         position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%;
     }
-    .plano-upload-area p { font-size:.8rem; color:#64748b; margin-top:4px; }
+    .plano-upload-area p { font-size:.8rem; color:var(--color-gray); margin-top:4px; }
     .plano-upload-area strong { color:#8b5cf6; }
     .plano-preview {
-        margin-top:.75rem; font-size:.8rem; color:#94a3b8;
+        margin-top:.75rem; font-size:.8rem; color:var(--color-gray-light);
         display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
     }
     .plano-preview a { color:#8b5cf6; text-decoration:none; }
@@ -168,7 +168,7 @@
             </thead>
             <tbody id="tbodyInmuebles">
                 <tr th:if="${inmuebles == null or inmuebles.isEmpty()}">
-                    <td colspan="9" style="text-align:center;color:#64748b;padding:2.5rem">
+                    <td colspan="9" style="text-align:center;color:var(--color-gray);padding:2.5rem">
                         No hay inmuebles registrados aún.
                     </td>
                 </tr>
@@ -187,7 +187,7 @@
                              data-hab=${i.habitaciones ?: 0},
                              data-banos=${i.banos ?: 0},
                              data-area=${i.area ?: 0}">
-                    <td style="color:#64748b;font-size:0.8rem" th:text="${'#' + i.id}">#1</td>
+                    <td style="color:var(--color-gray);font-size:0.8rem" th:text="${'#' + i.id}">#1</td>
                     <td>
                         <div style="display:flex;align-items:center;gap:10px">
                             <div class="thumb-placeholder">
@@ -197,7 +197,7 @@
                             <div>
                                 <div style="font-weight:500;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
                                      th:text="${i.titulo}">Título</div>
-                                <div style="font-size:.72rem;color:#64748b">
+                                <div style="font-size:.72rem;color:var(--color-gray)">
                                     <span th:text="${(i.habitaciones ?: 0) + ' hab · ' + (i.banos ?: 0) + ' baños · ' + (i.area ?: '—') + ' m²'}">0 hab</span>
                                     <span th:if="${!i.imagenes.isEmpty()}" style="color:#0ea5e9"
                                           th:text="${'· ' + i.imagenes.size() + (i.imagenes.size() > 1 ? ' fotos' : ' foto')}"></span>
@@ -206,13 +206,13 @@
                             </div>
                         </div>
                     </td>
-                    <td style="color:#64748b;font-size:.8rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+                    <td style="color:var(--color-gray);font-size:.8rem;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
                         th:text="${i.direccion + (i.ciudad != null ? ', ' + i.ciudad : '')}">Dirección</td>
                     <td th:text="${i.tipo}">Tipo</td>
                     <td><span class="chip" th:classappend="${chipOp}" th:text="${i.operacion}">Operación</span></td>
                     <td class="price-cell" th:text="${'$' + #numbers.formatDecimal(i.precio, 0, 'POINT', 0, 'NONE')}">$0</td>
                     <td><span class="chip" th:classappend="${chipEst}" th:text="${i.estado}">Estado</span></td>
-                    <td style="color:#64748b;font-size:.8rem"
+                    <td style="color:var(--color-gray);font-size:.8rem"
                         th:text="${i.propietario != null ? i.propietario.nombre + ' ' + (i.propietario.apellido ?: '') : '—'}">Publicador</td>
                     <td>
                         <div class="tbl-actions">
@@ -241,8 +241,8 @@
         </table>
     </div>
 
-    <div style="padding:.75rem 1.5rem;border-top:1px solid rgba(255,255,255,0.05);
-                font-size:.78rem;color:#64748b;display:flex;justify-content:space-between">
+    <div style="padding:.75rem 1.5rem;border-top:1px solid var(--overlay-2);
+                font-size:.78rem;color:var(--color-gray);display:flex;justify-content:space-between">
         <span id="contadorInmuebles" th:text="${inmuebles.size() + (inmuebles.size() != 1 ? ' inmuebles' : ' inmueble')}">
             0 inmuebles
         </span>
@@ -346,7 +346,7 @@
             <!-- Plano 2D -->
             <div class="form-group">
                 <label>Plano 2D
-                    <span style="color:#64748b;font-weight:400;font-size:.78rem">(opcional)</span>
+                    <span style="color:var(--color-gray);font-weight:400;font-size:.78rem">(opcional)</span>
                 </label>
                 <div class="plano-upload-area" id="uploadPlanoCrear"
                      ondragover="onDragOver(event,'uploadPlanoCrear')"
@@ -444,7 +444,7 @@
 
             <!-- Imágenes existentes -->
             <div class="form-group" id="seccionImagenesExistentes">
-                <label>Fotos actuales <span id="conteoExistentes" style="color:#64748b;font-weight:400"></span></label>
+                <label>Fotos actuales <span id="conteoExistentes" style="color:var(--color-gray);font-weight:400"></span></label>
                 <div class="img-preview-grid" id="editImgExistentes"></div>
             </div>
 
@@ -472,7 +472,7 @@
             <!-- Plano 2D en edición -->
             <div class="form-group">
                 <label>Plano 2D
-                    <span style="color:#64748b;font-weight:400;font-size:.78rem">(reemplaza el actual si subes uno nuevo)</span>
+                    <span style="color:var(--color-gray);font-weight:400;font-size:.78rem">(reemplaza el actual si subes uno nuevo)</span>
                 </label>
                 <div id="editPlanoActual" style="margin-bottom:.75rem"></div>
                 <div class="plano-upload-area" id="uploadPlanoEditar"
@@ -506,7 +506,7 @@
                         color:#ef4444;font-size:1.5rem;margin:0 auto 1rem;
                         display:flex;align-items:center;justify-content:center">⚠</div>
             <h2 style="font-size:1.05rem;margin-bottom:.5rem">¿Eliminar inmueble?</h2>
-            <p id="eliminarInmuebleMsg" style="color:#64748b;font-size:.875rem">
+            <p id="eliminarInmuebleMsg" style="color:var(--color-gray);font-size:.875rem">
                 Esta acción eliminará el inmueble y sus imágenes.
             </p>
         </div>
@@ -602,7 +602,7 @@ function previewPlano(input, previewId) {
         const reader = new FileReader();
         reader.onload = e => {
             prev.innerHTML = `<img src="${e.target.result}" class="plano-preview-img" alt="plano">
-                              <p style="font-size:.75rem;color:#64748b;margin-top:.4rem">📐 ${file.name}</p>`;
+                              <p style="font-size:.75rem;color:var(--color-gray);margin-top:.4rem">📐 ${file.name}</p>`;
         };
         reader.readAsDataURL(file);
     } else {
@@ -765,7 +765,12 @@ async function subirArchivo(endpoint, file) {
     const fd = new FormData();
     fd.append('file', file);
     const res = await fetch(endpoint, { method: 'POST', body: fd });
-    if (!res.ok) throw new Error('No se pudo subir el archivo');
+    if (!res.ok) {
+        // Se muestra el motivo real (sesion caducada, archivo muy grande,
+        // extension no permitida...) en vez de un mensaje generico.
+        const data = await res.json().catch(() => null);
+        throw new Error(`No se pudo subir "${file.name}": ${(data && data.mensaje) || 'HTTP ' + res.status}`);
+    }
     const data = await res.json();
     return data.url;
 }

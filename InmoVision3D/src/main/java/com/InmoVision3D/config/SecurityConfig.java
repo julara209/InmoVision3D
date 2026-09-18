@@ -1,4 +1,6 @@
-package com.InmoVision3D.security;
+package com.InmoVision3D.config;
+
+import com.InmoVision3D.security.UsuarioDetailsService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

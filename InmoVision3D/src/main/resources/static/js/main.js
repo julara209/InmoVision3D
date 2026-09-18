@@ -143,10 +143,10 @@ function initHeaderScroll() {
     if (header) {
         window.addEventListener('scroll', () => {
             if (window.scrollY > 50) {
-                header.style.background = 'rgba(15, 23, 42, 0.98)';
-                header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+                header.style.background = 'var(--header-bg)';
+                header.style.boxShadow = '0 4px 20px var(--shadow-menu)';
             } else {
-                header.style.background = 'rgba(15, 23, 42, 0.95)';
+                header.style.background = 'var(--header-bg)';
                 header.style.boxShadow = 'none';
             }
         });

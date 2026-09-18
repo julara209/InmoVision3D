@@ -7,15 +7,15 @@
 <style>
     .sol-table { width: 100%; border-collapse: collapse; }
     .sol-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
-                    color: #64748b; padding: .7rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
-    .sol-table td { padding: .8rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: .85rem; vertical-align: top; }
-    .sol-msg { max-width: 280px; color: #94a3b8; }
+                    color: var(--color-gray); padding: .7rem 1rem; border-bottom: 1px solid var(--overlay-3); }
+    .sol-table td { padding: .8rem 1rem; border-bottom: 1px solid var(--overlay-2); font-size: .85rem; vertical-align: top; }
+    .sol-msg { max-width: 280px; color: var(--color-gray-light); }
     .chip-pendiente  { background: rgba(245,158,11,0.15); color: #f59e0b; }
     .chip-aceptada   { background: rgba(34,197,94,0.15);  color: #22c55e; }
     .chip-rechazada  { background: rgba(239,68,68,0.15);  color: #ef4444; }
 </style>
 
-<div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden">
+<div style="background:var(--overlay-1);border:1px solid var(--overlay-3);border-radius:12px;overflow:hidden">
     <table class="sol-table">
         <thead>
             <tr>
@@ -31,24 +31,24 @@
         </thead>
         <tbody>
             <tr th:if="${solicitudes == null or solicitudes.isEmpty()}">
-                <td colspan="8" style="text-align:center;color:#64748b;padding:2.5rem">
+                <td colspan="8" style="text-align:center;color:var(--color-gray);padding:2.5rem">
                     No hay solicitudes registradas.
                 </td>
             </tr>
             <tr th:each="s : ${solicitudes}"
                 th:with="chipEst=${s.estado.name() == 'PENDIENTE' ? 'chip-pendiente' : (s.estado.name() == 'ACEPTADA' ? 'chip-aceptada' : 'chip-rechazada')}">
-                <td style="color:#64748b" th:text="${'#' + s.id}">#1</td>
+                <td style="color:var(--color-gray)" th:text="${'#' + s.id}">#1</td>
                 <td th:text="${s.inmueble != null ? s.inmueble.titulo : '—'}">Título</td>
                 <td th:text="${s.usuario != null ? s.usuario.nombre + ' ' + (s.usuario.apellido ?: '') : '—'}">Cliente</td>
                 <td class="sol-msg" th:text="${s.mensaje}">Mensaje</td>
-                <td style="color:#94a3b8;font-size:.78rem"
+                <td style="color:var(--color-gray-light);font-size:.78rem"
                     th:text="${s.fechaCita != null ? #temporals.format(s.fechaCita, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                 <td class="celda-estado"><span class="chip" th:classappend="${chipEst}" th:text="${s.estado}">Estado</span></td>
-                <td style="color:#64748b;font-size:.78rem"
+                <td style="color:var(--color-gray);font-size:.78rem"
                     th:text="${s.fechaSolicitud != null ? #temporals.format(s.fechaSolicitud, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                 <td class="celda-acciones">
                     <div class="tbl-actions">
-                        <span th:if="${s.estado.name() != 'PENDIENTE'}" style="color:#64748b;font-size:.78rem">—</span>
+                        <span th:if="${s.estado.name() != 'PENDIENTE'}" style="color:var(--color-gray);font-size:.78rem">—</span>
                         <button th:if="${s.estado.name() == 'PENDIENTE'}" class="btn-tbl" style="color:#22c55e"
                                 th:onclick="|cambiarEstadoSolicitud(${s.id}, 'ACEPTADA', this)|">Aceptar</button>
                         <button th:if="${s.estado.name() == 'PENDIENTE'}" class="btn-tbl danger"
@@ -72,7 +72,7 @@ async function cambiarEstadoSolicitud(id, estado, btn) {
         if (res.ok) {
             const chipClass = estado === 'ACEPTADA' ? 'chip-aceptada' : 'chip-rechazada';
             fila.querySelector('.celda-estado').innerHTML = `<span class="chip ${chipClass}">${estado}</span>`;
-            fila.querySelector('.celda-acciones').innerHTML = '<span style="color:#64748b;font-size:.78rem">—</span>';
+            fila.querySelector('.celda-acciones').innerHTML = '<span style="color:var(--color-gray);font-size:.78rem">—</span>';
             showToast('Estado actualizado', 'success');
         } else {
             showToast('Error al actualizar el estado', 'error');

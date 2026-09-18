@@ -3,26 +3,93 @@
    Sistema Inmobiliario con Visualización 3D
    ============================================= */
 
-/* Variables CSS */
-:root {
+/* =============================================
+   TEMA: variables de color
+   ---------------------------------------------
+   El sitio soporta dos temas. El tema se aplica con el atributo
+   data-theme en <html> (lo pone js/theme.js antes de pintar):
+       <html data-theme="dark">   -> tema oscuro (por defecto)
+       <html data-theme="light">  -> tema claro
+   Todos los colores del sitio salen de estas variables, así que
+   para ajustar un tema basta con tocar este bloque.
+   ============================================= */
+:root,
+:root[data-theme="dark"] {
+    /* Acentos (iguales en ambos temas) */
     --color-primary: #0ea5e9;
     --color-primary-dark: #0284c7;
     --color-secondary: #f97316;
-    --color-dark: #0f172a;
-    --color-dark-light: #1e293b;
-    --color-dark-lighter: #334155;
-    --color-gray: #64748b;
-    --color-gray-light: #94a3b8;
-    --color-light: #f1f5f9;
-    --color-white: #ffffff;
     --color-success: #22c55e;
     --color-error: #ef4444;
     --color-warning: #f59e0b;
-    --gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-    --gradient-dark: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-light) 100%);
+    --color-white: #ffffff;
+
+    /* Superficies */
+    --color-dark: #0f172a;          /* fondo base de la página */
+    --color-dark-light: #1e293b;    /* superficie elevada (paneles, tarjetas) */
+    --color-dark-lighter: #334155;  /* superficie terciaria */
+    --header-bg: rgba(15, 23, 42, 0.97);
+    --panel-bg: rgba(30, 41, 59, 0.9);
+
+    /* Texto */
+    --color-text: #ffffff;          /* texto principal */
+    --color-light: #f1f5f9;         /* texto fuerte / titulares */
+    --color-text-soft: #e2e8f0;     /* texto secundario */
+    --color-gray-light: #94a3b8;    /* texto atenuado */
+    --color-gray: #64748b;          /* texto muy atenuado */
+    --color-gray-dark: #475569;     /* texto deshabilitado */
+    --color-placeholder: #334155;   /* placeholders de inputs */
+
+    /* Capas de contraste (bordes, hovers, separadores) */
+    --overlay-1: rgba(255, 255, 255, 0.03);
+    --overlay-2: rgba(255, 255, 255, 0.05);
+    --overlay-3: rgba(255, 255, 255, 0.08);
+    --overlay-4: rgba(255, 255, 255, 0.10);
+    --overlay-5: rgba(255, 255, 255, 0.25);
+
+    /* Sombras */
     --shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.2);
+    --shadow-menu: rgba(0, 0, 0, 0.4);
+
+    color-scheme: dark;
+}
+
+/* ── TEMA CLARO ── */
+:root[data-theme="light"] {
+    --color-dark: #eef2f7;
+    --color-dark-light: #ffffff;
+    --color-dark-lighter: #e2e8f0;
+    --header-bg: rgba(255, 255, 255, 0.97);
+    --panel-bg: rgba(255, 255, 255, 0.92);
+
+    --color-text: #0f172a;
+    --color-light: #0f172a;
+    --color-text-soft: #1e293b;
+    --color-gray-light: #475569;
+    --color-gray: #64748b;
+    --color-gray-dark: #64748b;
+    --color-placeholder: #94a3b8;
+
+    --overlay-1: rgba(15, 23, 42, 0.03);
+    --overlay-2: rgba(15, 23, 42, 0.07);
+    --overlay-3: rgba(15, 23, 42, 0.09);
+    --overlay-4: rgba(15, 23, 42, 0.13);
+    --overlay-5: rgba(15, 23, 42, 0.25);
+
+    --shadow: 0 10px 40px rgba(15, 23, 42, 0.10);
+    --shadow-sm: 0 4px 20px rgba(15, 23, 42, 0.07);
+    --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.14);
+    --shadow-menu: rgba(15, 23, 42, 0.18);
+
+    color-scheme: light;
+}
+
+/* Comunes a ambos temas */
+:root {
+    --gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    --gradient-dark: linear-gradient(135deg, var(--color-dark) 0%, var(--color-dark-light) 100%);
     --radius: 16px;
     --radius-sm: 8px;
     --radius-lg: 24px;
@@ -46,7 +113,7 @@ html {
 body {
     font-family: var(--font-family);
     background-color: var(--color-dark);
-    color: var(--color-white);
+    color: var(--color-text);
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
@@ -90,9 +157,9 @@ img {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(15, 23, 42, 0.97);
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--overlay-3);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -129,7 +196,7 @@ img {
 .logo-text {
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 /* Nav links */
@@ -154,7 +221,7 @@ img {
 }
 
 .nav-link:hover {
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .nav-link.active {
@@ -175,7 +242,7 @@ img {
 /* Login button */
 .btn-login {
     background: var(--gradient);
-    color: var(--color-white) !important;
+    color: #ffffff !important;
     padding: 10px 24px;
     border-radius: 50px;
     border: none;
@@ -210,11 +277,11 @@ img {
     padding: 6px 10px;
     border-radius: 8px;
     transition: background 0.2s;
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .profile-box:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--overlay-3);
 }
 
 /* Avatar circular con borde de acento */
@@ -254,9 +321,9 @@ img {
     display: none;
     min-width: 190px;
     z-index: 9999;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--overlay-4);
     overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 32px var(--shadow-menu);
 }
 
 .dropdown-menu.show {
@@ -275,8 +342,8 @@ img {
 }
 
 .dropdown-menu a:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: var(--color-white);
+    background: var(--overlay-3);
+    color: var(--color-text);
 }
 
 .dropdown-menu a.active {
@@ -286,40 +353,36 @@ img {
 
 .dropdown-divider {
     height: 1px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--overlay-3);
     margin: 4px 0;
 }
 
-/* ═══════════════════════════════════════════════════
-   HEADER — mismo patrón que usuario/favoritos.html
-   (usado en todo el sitio para que el nav se vea igual
-   en cualquier página) */
 .adm-header {
     position: sticky; top: 0; z-index: 100;
-    background: rgba(15, 23, 42, 0.97);
+    background: var(--header-bg);
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--overlay-3);
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 3rem; height: 70px;
 }
 .adm-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .adm-logo img { width: 50px; height: 50px; border-radius: 8px; object-fit: contain; }
-.adm-logo .logo-text { font-size: 1.4rem; font-weight: 700; color: #f1f5f9; }
+.adm-logo .logo-text { font-size: 1.4rem; font-weight: 700; color: var(--color-light); }
 .adm-logo .logo-text span,
 .adm-logo .logo-text .highlight {
     background: linear-gradient(135deg, #0ea5e9, #f97316);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .adm-header-nav { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; margin-right: 1rem; }
-.adm-header-nav a { color: #94a3b8; text-decoration: none; font-size: 1rem; font-weight: 500; transition: color .2s; }
-.adm-header-nav a:hover { color: #f1f5f9; }
+.adm-header-nav a { color: var(--color-gray-light); text-decoration: none; font-size: 1rem; font-weight: 500; transition: color .2s; }
+.adm-header-nav a:hover { color: var(--color-light); }
 .adm-header-nav a.active { color: #0ea5e9; }
 
 .adm-profile {
     position: relative; display: flex; align-items: center; gap: 8px;
     cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: background .2s;
 }
-.adm-profile:hover { background: rgba(255, 255, 255, 0.06); }
+.adm-profile:hover { background: var(--overlay-3); }
 .adm-profile .avatar {
     width: 34px; height: 34px; border-radius: 50%;
     background: rgba(14, 165, 233, 0.2); color: #0ea5e9;
@@ -332,18 +395,18 @@ img {
 
 .adm-dropdown {
     display: none; position: absolute; top: calc(100% + 8px); right: 0;
-    min-width: 190px; background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px;
-    overflow: hidden; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); z-index: 200;
+    min-width: 190px; background: var(--color-dark-light);
+    border: 1px solid var(--overlay-4); border-radius: 10px;
+    overflow: hidden; box-shadow: 0 8px 32px var(--shadow-menu); z-index: 200;
 }
 .adm-dropdown.open { display: block; }
 .adm-dropdown a {
-    display: block; padding: 11px 16px; color: #94a3b8;
+    display: block; padding: 11px 16px; color: var(--color-gray-light);
     text-decoration: none; font-size: 1rem; transition: background .15s, color .15s;
 }
-.adm-dropdown a:hover { background: rgba(255, 255, 255, 0.07); color: #f1f5f9; }
+.adm-dropdown a:hover { background: var(--overlay-3); color: var(--color-light); }
 .adm-dropdown a.active { color: #0ea5e9; background: rgba(14, 165, 233, 0.1); }
-.adm-dropdown hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 4px 0; }
+.adm-dropdown hr { border: none; border-top: 1px solid var(--overlay-3); margin: 4px 0; }
 
 .btn-login-adm {
     background: var(--gradient);
@@ -373,7 +436,7 @@ img {
 .menu-toggle span {
     width: 25px;
     height: 2px;
-    background: var(--color-white);
+    background: var(--color-text);
     transition: var(--transition);
 }
 
@@ -436,11 +499,11 @@ img {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
-    background: rgba(30, 41, 59, 0.9);
+    background: var(--panel-bg);
     backdrop-filter: blur(10px);
     padding: 25px;
     border-radius: var(--radius);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--overlay-4);
     box-shadow: var(--shadow);
 }
 
@@ -450,9 +513,9 @@ img {
     min-width: 140px;
     padding: 14px 18px;
     background: var(--color-dark);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--overlay-4);
     border-radius: var(--radius-sm);
-    color: var(--color-white);
+    color: var(--color-text);
     font-family: inherit;
     font-size: 0.95rem;
     transition: var(--transition);
@@ -467,7 +530,7 @@ img {
 
 .filtros-top select option {
     background: var(--color-dark);
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .filtros-top input::placeholder {
@@ -479,7 +542,7 @@ img {
     background: var(--gradient);
     border: none;
     border-radius: var(--radius-sm);
-    color: var(--color-white);
+    color: #ffffff;
     font-family: inherit;
     font-size: 1rem;
     font-weight: 600;
@@ -513,7 +576,7 @@ img {
     background: var(--color-dark);
     border-radius: var(--radius);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--overlay-2);
     transition: var(--transition);
     position: relative;
 }
@@ -547,7 +610,7 @@ img {
     left: 15px;
     padding: 6px 16px;
     background: var(--color-primary);
-    color: var(--color-white);
+    color: #ffffff;
     font-size: 0.8rem;
     font-weight: 600;
     border-radius: 50px;
@@ -564,7 +627,7 @@ img {
     right: 15px;
     width: 40px;
     height: 40px;
-    background: rgba(0, 0, 0, 0.5);
+    background: var(--shadow-menu);
     backdrop-filter: blur(5px);
     border: none;
     border-radius: 50%;
@@ -577,14 +640,14 @@ img {
 }
 
 .btn-favorite:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--shadow-menu);
     transform: scale(1.1);
 }
 
 .btn-favorite svg {
     width: 22px;
     height: 22px;
-    stroke: var(--color-white);
+    stroke: #ffffff;
     fill: transparent;
     transition: var(--transition);
 }
@@ -606,7 +669,7 @@ img {
 }
 
 .card-content h3 a {
-    color: var(--color-white);
+    color: var(--color-text);
     transition: var(--transition);
 }
 
@@ -671,12 +734,12 @@ img {
 
 .btn-plano:hover {
     background: var(--color-primary);
-    color: var(--color-white);
+    color: #ffffff;
 }
 
 .btn-contacto {
     background: var(--gradient);
-    color: var(--color-white);
+    color: #ffffff;
 }
 
 .btn-contacto:hover {
@@ -698,7 +761,7 @@ img {
     background: var(--color-dark);
     border-radius: var(--radius);
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--overlay-2);
     transition: var(--transition);
 }
 
@@ -834,7 +897,7 @@ img {
     padding: 40px 30px;
     border-radius: var(--radius);
     text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--overlay-2);
     transition: var(--transition);
 }
 
@@ -878,7 +941,7 @@ img {
    ============================================= */
 .footer {
     background: var(--color-dark);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--overlay-2);
     padding-top: 60px;
 }
 
@@ -927,7 +990,7 @@ img {
     text-align: center;
     padding: 25px;
     margin-top: 40px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--overlay-2);
     color: var(--color-gray);
     font-size: 0.9rem;
 }
@@ -953,7 +1016,7 @@ img {
 
 .btn-primary {
     background: var(--gradient);
-    color: var(--color-white);
+    color: #ffffff;
 }
 
 .btn-primary:hover {
@@ -969,12 +1032,12 @@ img {
 
 .btn-secondary:hover {
     background: var(--color-primary);
-    color: var(--color-white);
+    color: #ffffff;
 }
 
 .btn-danger {
     background: var(--color-error);
-    color: var(--color-white);
+    color: #ffffff;
 }
 
 .btn-danger:hover {
@@ -1002,16 +1065,16 @@ img {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .form-control {
     width: 100%;
     padding: 14px 18px;
     background: var(--color-dark);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--overlay-4);
     border-radius: var(--radius-sm);
-    color: var(--color-white);
+    color: var(--color-text);
     font-family: inherit;
     font-size: 1rem;
     transition: var(--transition);
@@ -1073,13 +1136,13 @@ select.form-control {
     background: var(--color-dark-light);
     border-radius: var(--radius);
     padding: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--overlay-2);
 }
 
 .card-header {
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--overlay-4);
 }
 
 .card-header h2,
@@ -1103,13 +1166,13 @@ select.form-control {
 .table td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--overlay-4);
 }
 
 .table th {
     background: var(--color-dark);
     font-weight: 600;
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .table td {
@@ -1117,7 +1180,7 @@ select.form-control {
 }
 
 .table tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--overlay-1);
 }
 
 /* =============================================
@@ -1135,18 +1198,18 @@ select.form-control {
     padding: 10px 16px;
     border-radius: var(--radius-sm);
     color: var(--color-gray-light);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--overlay-4);
     transition: var(--transition);
 }
 
 .pagination a:hover {
     background: var(--color-dark-light);
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .pagination .active {
     background: var(--gradient);
-    color: var(--color-white);
+    color: #ffffff;
     border-color: transparent;
 }
 
@@ -1182,7 +1245,7 @@ select.form-control {
 
 .modal-header {
     padding: 20px 25px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--overlay-4);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1203,7 +1266,7 @@ select.form-control {
 }
 
 .modal-close:hover {
-    color: var(--color-white);
+    color: var(--color-text);
 }
 
 .modal-body {
@@ -1212,7 +1275,7 @@ select.form-control {
 
 .modal-footer {
     padding: 15px 25px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid var(--overlay-4);
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -1222,7 +1285,7 @@ select.form-control {
    UPLOAD
    ============================================= */
 .upload-box {
-    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border: 2px dashed var(--overlay-5);
     padding: 40px 20px;
     text-align: center;
     border-radius: var(--radius);
@@ -1330,7 +1393,7 @@ select.form-control {
 .spinner {
     width: 40px;
     height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
+    border: 3px solid var(--overlay-4);
     border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -1401,7 +1464,7 @@ select.form-control {
         background: var(--color-dark);
         flex-direction: column;
         padding: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid var(--overlay-3);
     }
 
     .nav.active {
@@ -1445,4 +1508,126 @@ select.form-control {
     .card-buttons {
         flex-direction: column;
     }
+}
+
+/* =============================================
+   BOTON DE TEMA (claro / oscuro)
+   Lo inyecta js/theme.js dentro del header.
+   ============================================= */
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    margin-right: 0.75rem;
+    padding: 0;
+    flex-shrink: 0;
+    background: var(--overlay-2);
+    border: 1px solid var(--overlay-4);
+    border-radius: 50%;
+    color: var(--color-gray-light);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.theme-toggle svg {
+    width: 19px;
+    height: 19px;
+}
+
+.theme-toggle:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background: rgba(14, 165, 233, 0.12);
+    transform: rotate(-15deg);
+}
+
+.theme-toggle-floating {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    margin-right: 0;
+    background: var(--color-dark-light);
+    box-shadow: var(--shadow-sm);
+}
+
+/* =============================================
+   AJUSTES PROPIOS DEL TEMA CLARO
+   Retoques puntuales que no salen solos de las
+   variables (superficies, contrastes, imágenes).
+   ============================================= */
+:root[data-theme="light"] body {
+    background-color: var(--color-dark);
+    color: var(--color-text);
+}
+
+/* Las tarjetas necesitan un borde algo más visible sobre fondo claro */
+:root[data-theme="light"] .inmueble-card,
+:root[data-theme="light"] .favorito-card,
+:root[data-theme="light"] .servicio-card,
+:root[data-theme="light"] .card {
+    background: var(--color-dark-light);
+    border-color: var(--overlay-4);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Secciones alternas: invertir el orden para conservar el contraste */
+:root[data-theme="light"] .inmuebles,
+:root[data-theme="light"] .servicios {
+    background: var(--color-dark);
+}
+
+:root[data-theme="light"] .quienes-somos,
+:root[data-theme="light"] .footer {
+    background: var(--color-dark-light);
+}
+
+/* Inputs: fondo blanco en vez de azul oscuro */
+:root[data-theme="light"] .form-control,
+:root[data-theme="light"] .filtros-top select,
+:root[data-theme="light"] .filtros-top input,
+:root[data-theme="light"] .filtros-top select option,
+:root[data-theme="light"] input,
+:root[data-theme="light"] select,
+:root[data-theme="light"] textarea {
+    background-color: var(--color-dark-light);
+    color: var(--color-text);
+    border-color: var(--overlay-4);
+}
+
+/* El overlay oscuro del modal se suaviza */
+:root[data-theme="light"] .modal-overlay {
+    background: rgba(15, 23, 42, 0.45);
+}
+
+/* El botón de favorito va sobre la foto: mantener el círculo oscuro */
+:root[data-theme="light"] .btn-favorite {
+    background: rgba(15, 23, 42, 0.45);
+}
+
+:root[data-theme="light"] .btn-favorite:hover {
+    background: rgba(15, 23, 42, 0.65);
+}
+
+/* Header claro: sombra suave en lugar de borde blanco */
+:root[data-theme="light"] .adm-header,
+:root[data-theme="light"] .header {
+    box-shadow: 0 1px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* Transición suave al cambiar de tema */
+body,
+.header,
+.adm-header,
+.card,
+.inmueble-card,
+.favorito-card,
+.servicio-card,
+.form-control,
+.modal,
+.dropdown-menu,
+.adm-dropdown {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }

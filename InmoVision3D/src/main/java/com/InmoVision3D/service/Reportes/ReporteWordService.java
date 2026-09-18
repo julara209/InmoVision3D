@@ -17,11 +17,30 @@ import java.util.List;
  * Genera los 4 reportes del Centro de reportes en formato Word (.docx):
  * inventario general (listado), por tipo de inmueble, análisis de
  * precios y por publicador.
+ *
+ * PATRÓN GoF: Strategy — implementación concreta para el formato "word".
+ * Ver {@link ReporteExporter} y {@link ReporteExporterFactory}.
  */
 @Service
-public class ReporteWordService {
+public class ReporteWordService implements ReporteExporter {
+
+    @Override
+    public String getFormato() {
+        return "word";
+    }
+
+    @Override
+    public String getExtension() {
+        return "docx";
+    }
+
+    @Override
+    public String getContentType() {
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    }
 
     // ═══════════════════ INVENTARIO GENERAL (listado) ═══════════════════
+    @Override
     public void generar(List<Inmueble> inmuebles, OutputStream out) throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             escribirEncabezado(doc, "Reporte de Inventario - InmoVision 3D");
@@ -46,6 +65,7 @@ public class ReporteWordService {
     }
 
     // ═══════════════════ POR TIPO DE INMUEBLE ═══════════════════
+    @Override
     public void generarPorTipo(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             escribirEncabezado(doc, "Reporte por Tipo de Inmueble - InmoVision 3D");
@@ -67,6 +87,7 @@ public class ReporteWordService {
     }
 
     // ═══════════════════ ANALISIS DE PRECIOS ═══════════════════
+    @Override
     public void generarAnalisisPrecios(List<EstadisticaTipoDTO> stats, OutputStream out) throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             escribirEncabezado(doc, "Analisis de Precios por Tipo - InmoVision 3D");
@@ -89,6 +110,7 @@ public class ReporteWordService {
     }
 
     // ═══════════════════ POR PUBLICADOR ═══════════════════
+    @Override
     public void generarPorPublicador(List<ResumenPublicadorDTO> resumen, OutputStream out) throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             escribirEncabezado(doc, "Reporte por Publicador - InmoVision 3D");

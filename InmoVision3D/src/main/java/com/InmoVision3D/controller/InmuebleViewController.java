@@ -9,6 +9,7 @@ import com.InmoVision3D.repository.FavoritoRepository;
 import com.InmoVision3D.repository.InmuebleRepository;
 import com.InmoVision3D.repository.UsuarioRepository;
 import com.InmoVision3D.service.InmuebleService;
+import com.InmoVision3D.service.filtro.InmuebleFiltroBuilder;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,33 +60,17 @@ public class InmuebleViewController {
                           Authentication authentication,
                           Model model) {
 
-        Specification<Inmueble> spec =
-                (root, query, cb) -> cb.equal(root.get("estado"), EstadoInmueble.DISPONIBLE);
-
-        TipoInmueble tipoEnum = parseEnumSeguro(TipoInmueble.class, tipo);
-        if (tipoEnum != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("tipo"), tipoEnum));
-        }
-
-        if (ubicacion != null && !ubicacion.isBlank()) {
-            String like = "%" + ubicacion.toLowerCase() + "%";
-            spec = spec.and((root, query, cb) -> cb.or(
-                    cb.like(cb.lower(root.get("direccion")), like),
-                    cb.like(cb.lower(root.get("ciudad")), like)));
-        }
-
-        TipoOperacion operacionEnum = parseEnumSeguro(TipoOperacion.class, operacion);
-        if (operacionEnum != null) {
-            spec = spec.and((root, query, cb) -> cb.equal(root.get("operacion"), operacionEnum));
-        }
-
-        if (precioMax != null) {
-            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("precio"), precioMax));
-        }
-
-        if (habitaciones != null) {
-            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("habitaciones"), habitaciones));
-        }
+        // PATRÓN GoF: Builder — el mismo InmuebleFiltroBuilder que usa el
+        // Centro de Reportes (ver InmuebleSpecification.conFiltros), así el
+        // catálogo público y los reportes interpretan cada filtro igual.
+        Specification<Inmueble> spec = InmuebleFiltroBuilder.nuevo()
+                .conEstado(EstadoInmueble.DISPONIBLE)
+                .conTipo(parseEnumSeguro(TipoInmueble.class, tipo))
+                .conUbicacion(ubicacion)
+                .conOperacion(parseEnumSeguro(TipoOperacion.class, operacion))
+                .conPrecioMaximo(precioMax)
+                .conHabitacionesMinimas(habitaciones)
+                .build();
 
         int paginaSegura = Math.max(pagina, 1);
         Page<Inmueble> resultado = inmuebleRepository.findAll(spec,

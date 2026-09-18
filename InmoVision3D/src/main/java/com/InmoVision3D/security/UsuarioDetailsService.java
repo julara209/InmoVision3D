@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * Puente entre la tabla "usuarios" y Spring Security.
- * Reemplaza la validación manual que hacía AuthController.php en PHP.
  */
 @Service
 public class UsuarioDetailsService implements UserDetailsService {

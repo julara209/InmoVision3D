@@ -23,6 +23,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const buildings = [];
     const buildingGroup = new THREE.Group();
 
+    // Materiales registrados para poder ajustarlos al cambiar de tema.
+    // En tema claro el wireframe necesita más opacidad para que no se
+    // pierda sobre el fondo claro.
+    const materiales = [];
+    function temaClaro() {
+        return document.documentElement.getAttribute('data-theme') === 'light';
+    }
+    function registrar(material, opacidadOscuro, opacidadClaro) {
+        materiales.push({ material, opacidadOscuro, opacidadClaro });
+        material.opacity = temaClaro() ? opacidadClaro : opacidadOscuro;
+    }
+    function aplicarTema() {
+        materiales.forEach(function (m) {
+            m.material.opacity = temaClaro() ? m.opacidadClaro : m.opacidadOscuro;
+            m.material.needsUpdate = true;
+        });
+    }
+    document.addEventListener('themechange', aplicarTema);
+
     // Create a simple house shape
     function createHouse(x, y, z, scale, color) {
         const group = new THREE.Group();
@@ -35,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: 0.3,
             wireframe: true
         });
+        registrar(bodyMaterial, 0.3, 0.55);
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         group.add(body);
 
@@ -46,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: 0.4,
             wireframe: true
         });
+        registrar(roofMaterial, 0.4, 0.65);
         const roof = new THREE.Mesh(roofGeometry, roofMaterial);
         roof.position.y = 0.65;
         roof.rotation.y = Math.PI / 4;
@@ -98,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         opacity: 0.6
     });
 
+    registrar(particlesMaterial, 0.6, 0.75);
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 

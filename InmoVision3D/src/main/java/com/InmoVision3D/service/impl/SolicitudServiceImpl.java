@@ -10,12 +10,20 @@ import com.InmoVision3D.repository.InmuebleRepository;
 import com.InmoVision3D.repository.SolicitudRepository;
 import com.InmoVision3D.repository.UsuarioRepository;
 import com.InmoVision3D.service.SolicitudService;
+import com.InmoVision3D.service.notificacion.SolicitudObserver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * PATRÓN GoF: Observer — este servicio es el "sujeto". Al cambiar el estado
+ * de una solicitud avisa a todos los {@link SolicitudObserver} disponibles
+ * (Spring inyecta aquí, en una sola lista, todos los beans que implementen
+ * esa interfaz — ver el paquete service.notificacion), sin necesitar saber
+ * cuántos hay ni qué hace cada uno.
+ */
 @Service
 @Transactional
 public class SolicitudServiceImpl implements SolicitudService {
@@ -23,12 +31,14 @@ public class SolicitudServiceImpl implements SolicitudService {
     private final SolicitudRepository solicitudRepository;
     private final UsuarioRepository usuarioRepository;
     private final InmuebleRepository inmuebleRepository;
+    private final List<SolicitudObserver> observadores;
 
     public SolicitudServiceImpl(SolicitudRepository solicitudRepository, UsuarioRepository usuarioRepository,
-                                 InmuebleRepository inmuebleRepository) {
+                                 InmuebleRepository inmuebleRepository, List<SolicitudObserver> observadores) {
         this.solicitudRepository = solicitudRepository;
         this.usuarioRepository = usuarioRepository;
         this.inmuebleRepository = inmuebleRepository;
+        this.observadores = observadores;
     }
 
     @Override
@@ -89,8 +99,18 @@ public class SolicitudServiceImpl implements SolicitudService {
     @Override
     public Solicitud cambiarEstado(Long id, EstadoSolicitud nuevoEstado) {
         Solicitud solicitud = obtenerPorId(id);
+        EstadoSolicitud estadoAnterior = solicitud.getEstado();
         solicitud.setEstado(nuevoEstado);
-        return solicitudRepository.save(solicitud);
+        Solicitud actualizada = solicitudRepository.save(solicitud);
+
+        // PATRÓN GoF: Observer — se notifica solo si el estado realmente
+        // cambió, para no disparar avisos innecesarios cuando el nuevo
+        // estado coincide con el que ya tenía.
+        if (estadoAnterior != nuevoEstado) {
+            observadores.forEach(observador -> observador.onCambioEstado(actualizada, estadoAnterior));
+        }
+
+        return actualizada;
     }
 
     @Override

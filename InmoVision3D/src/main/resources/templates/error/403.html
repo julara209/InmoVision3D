@@ -2,11 +2,27 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/img/logo.png}" type="image/png" />
     <title>Acceso denegado - InmoVision 3D</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body>
-    <h1>Acceso denegado</h1>
-    <p th:text="${mensaje}">No tienes permisos para acceder a esta página.</p>
-    <a th:href="@{/}">Volver al inicio</a>
+    <header class="adm-header">
+        <a th:href="@{/}" class="adm-logo">
+            <img th:src="@{/img/logo.png}" alt="InmoVision 3D logo">
+            <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
+        </a>
+    </header>
+
+    <main class="section-container" style="padding-top:80px; padding-bottom:80px; text-align:center;">
+        <h1 class="section-title" style="margin-bottom:20px;">Acceso <span class="highlight">denegado</span></h1>
+        <p th:text="${mensaje}" style="color:var(--color-gray-light); margin-bottom:30px;">
+            No tienes permisos para acceder a esta página.
+        </p>
+        <a th:href="@{/}" class="btn btn-primary">Volver al inicio</a>
+    </main>
 </body>
 </html>

@@ -71,8 +71,8 @@
             gap: 15px;
             margin-bottom: 25px;
             padding: 20px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid var(--overlay-4);
+            border-bottom: 1px solid var(--overlay-4);
         }
         
         .info-feature {
@@ -83,7 +83,7 @@
         }
         
         .info-feature strong {
-            color: var(--color-white);
+            color: var(--color-text);
         }
         
         .publicador-info {
@@ -156,9 +156,9 @@
             padding: 15px;
             margin-bottom: 15px;
             background: transparent;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid var(--overlay-5);
             border-radius: var(--radius-sm);
-            color: var(--color-white);
+            color: var(--color-text);
             font-family: inherit;
             font-size: 1rem;
             cursor: pointer;
@@ -198,6 +198,7 @@
             }
         }
     </style>
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body>
      <!-- Header -->

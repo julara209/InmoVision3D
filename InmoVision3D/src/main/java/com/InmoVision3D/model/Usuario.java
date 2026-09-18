@@ -2,6 +2,7 @@ package com.InmoVision3D.model;
 
 import com.InmoVision3D.model.enums.RolUsuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -29,7 +30,10 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    @NotBlank(message = "El apellido es obligatorio")
+    // El apellido es opcional en el panel de administracion, asi que aqui no
+    // lleva @NotBlank: con la validacion a nivel de entidad activa, guardar un
+    // usuario sin apellido hacia fallar el flush de Hibernate con un 500.
+    // La columna sigue siendo NOT NULL, por eso el servicio guarda "" y nunca null.
     @Column(nullable = false, length = 100)
     private String apellido;
 
@@ -41,7 +45,12 @@ public class Usuario {
     @NotBlank(message = "La contrasena es obligatoria")
     @Size(min = 6, message = "La contrasena debe tener al menos 6 caracteres")
     @Column(nullable = false)
-    @JsonIgnore
+    // WRITE_ONLY: la contrasena se puede ENVIAR (alta de usuario o cambio desde
+    // el panel de administracion) pero nunca se DEVUELVE en las respuestas JSON.
+    // Antes tenia @JsonIgnore, que bloquea los dos sentidos: por eso al crear un
+    // usuario desde el panel siempre fallaba con "La contrasena es obligatoria"
+    // y la contrasena nueva al editar se descartaba en silencio.
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(length = 20)

@@ -25,14 +25,14 @@
         }
 
         .auth-box {
-            background: rgba(30, 41, 59, 0.9);
+            background: var(--panel-bg);
             backdrop-filter: blur(15px);
             padding: 40px;
             border-radius: var(--radius);
             width: 100%;
             max-width: 480px;
             box-shadow: var(--shadow-lg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--overlay-4);
         }
 
         .auth-box h2 {
@@ -52,7 +52,7 @@
             content: "";
             flex: 1;
             height: 1px;
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--overlay-5);
         }
 
         .auth-divider span {
@@ -113,7 +113,7 @@
             flex: 1;
             padding: 12px;
             background: var(--color-dark);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--overlay-4);
             border-radius: var(--radius-sm);
             cursor: pointer;
             text-align: center;
@@ -143,6 +143,7 @@
             font-size: 0.8rem;
         }
     </style>
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 
 <body class="auth-page">
@@ -181,7 +182,7 @@
                         <input type="password" id="contrasena" name="contrasena" class="form-control"
                             placeholder="********" required style="padding-right: 44px;">
                         <button type="button" onclick="togglePw()"
-                            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:18px;display:flex;align-items:center;padding:4px;"
+                            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--color-gray-light);font-size:18px;display:flex;align-items:center;padding:4px;"
                             aria-label="Mostrar u ocultar contraseña">
                             <i class="ti ti-eye" id="eye-icon"></i>
                         </button>
