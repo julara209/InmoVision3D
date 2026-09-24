@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.InmoVision3D.service.UsuarioService;
 
-/**
- * Sirve /usuario/perfil (no existía ningún @Controller para esta vista;
- * solo había la API REST /api/usuarios).
- */
+
 @Controller
 @RequestMapping("/usuario")
 public class UsuarioViewController {
@@ -63,8 +60,6 @@ public class UsuarioViewController {
                                    RedirectAttributes redirectAttributes) {
         Usuario actual = usuarioService.obtenerPorEmail(authentication.getName());
         try {
-            // Se usa actualizarPerfil (y no actualizar) para que el rol no se toque:
-            // un publicador o un administrador que edite su perfil debe conservarlo.
             usuarioService.actualizarPerfil(actual.getId(), nombre, apellido, email, telefono);
             redirectAttributes.addFlashAttribute("mensaje", "Perfil actualizado correctamente");
         } catch (RuntimeException e) {

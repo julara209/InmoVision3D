@@ -29,10 +29,7 @@ import java.util.List;
  *
  * PATRÓN GoF: Strategy + Factory Method — el formato de salida se resuelve
  * pidiendo la estrategia adecuada a {@link ReporteExporterFactory} y
- * llamándola a través de la interfaz {@link ReporteExporter}. Antes había
- * un switch de 3 vías (pdf/excel/word) repetido dentro de cada uno de los
- * 4 tipos de reporte; ahora ese switch no existe: agregar un formato nuevo
- * no requiere tocar este controller.
+ * llamándola a través de la interfaz {@link ReporteExporter}.
  */
 @Controller
 @RequestMapping("/admin/reportes")
@@ -102,7 +99,6 @@ public class ReporteController {
         return base + System.currentTimeMillis();
     }
 
-    /** Configura Content-Type y Content-Disposition según la estrategia elegida. */
     private void configurarCabecera(HttpServletResponse response, ReporteExporter exportador, String nombreBase) {
         response.setContentType(exportador.getContentType());
         response.setHeader("Content-Disposition",

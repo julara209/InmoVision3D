@@ -17,11 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-/**
- * Sirve el editor de planos 2D (que genera datos 3D) y el visor 3D.
- * No existía ningún @Controller para estas vistas; solo la API REST
- * /api/inmuebles/{id}/planos.
- */
+
 @Controller
 @RequestMapping("/planos")
 public class PlanoViewController {

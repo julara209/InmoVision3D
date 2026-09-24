@@ -25,12 +25,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Reemplaza views/inmuebles/*.php + controllers/InmuebleController.php (parte de vistas).
- * El CRUD puro por API ya vivía en InmuebleController (REST, /api/inmuebles);
- * este controller sirve las páginas HTML equivalentes a listar.php, detalle.php
- * y publicar.php, con los datos reales para que las plantillas Thymeleaf funcionen.
- */
+
 @Controller
 @RequestMapping("/inmuebles")
 public class InmuebleViewController {

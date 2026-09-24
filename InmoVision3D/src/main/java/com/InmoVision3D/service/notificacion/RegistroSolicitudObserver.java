@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  *
  * Deja constancia en el log de cada transición de estado, para poder
  * auditar quién aceptó/rechazó qué solicitud y cuándo, sin mezclar esa
- * responsabilidad dentro de {@code SolicitudServiceImpl}.
+ * responsabilidad dentro de {@code SolicitudService}.
  */
 @Component
 public class RegistroSolicitudObserver implements SolicitudObserver {

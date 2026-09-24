@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Sirve /usuario/favoritos (no existía ningún @Controller para esta vista;
- * solo estaba la API REST /api/favoritos).
- */
+
 @Controller
 @RequestMapping("/usuario/favoritos")
 public class FavoritoViewController {

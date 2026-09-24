@@ -1,31 +1,97 @@
 package com.InmoVision3D.service;
 
+import com.InmoVision3D.exception.ResourceNotFoundException;
 import com.InmoVision3D.model.Inmueble;
+import com.InmoVision3D.model.Usuario;
 import com.InmoVision3D.model.enums.EstadoInmueble;
 import com.InmoVision3D.model.enums.TipoInmueble;
+import com.InmoVision3D.repository.InmuebleRepository;
+import com.InmoVision3D.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface InmuebleService {
+@Service
+@Transactional
+public class InmuebleService {
 
-    Inmueble crear(Inmueble inmueble, Long propietarioId);
+    private final InmuebleRepository inmuebleRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    Inmueble obtenerPorId(Long id);
+    public InmuebleService(InmuebleRepository inmuebleRepository, UsuarioRepository usuarioRepository) {
+        this.inmuebleRepository = inmuebleRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
-    List<Inmueble> listarTodos();
+    public Inmueble crear(Inmueble inmueble, Long propietarioId) {
+        Usuario propietario = usuarioRepository.findById(propietarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario", propietarioId));
+        inmueble.setId(null);
+        inmueble.setPropietario(propietario);
+        if (inmueble.getEstado() == null) {
+            inmueble.setEstado(EstadoInmueble.DISPONIBLE);
+        }
+        return inmuebleRepository.save(inmueble);
+    }
 
-    List<Inmueble> listarPorEstado(EstadoInmueble estado);
+    @Transactional(readOnly = true)
+    public Inmueble obtenerPorId(Long id) {
+        return inmuebleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inmueble", id));
+    }
 
-    List<Inmueble> listarPorTipo(TipoInmueble tipo);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarTodos() {
+        return inmuebleRepository.findAll();
+    }
 
-    List<Inmueble> listarPorCiudad(String ciudad);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarPorEstado(EstadoInmueble estado) {
+        return inmuebleRepository.findByEstado(estado);
+    }
 
-    List<Inmueble> listarPorPropietario(Long propietarioId);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarPorTipo(TipoInmueble tipo) {
+        return inmuebleRepository.findByTipo(tipo);
+    }
 
-    List<Inmueble> listarPorRangoPrecio(BigDecimal min, BigDecimal max);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarPorCiudad(String ciudad) {
+        return inmuebleRepository.findByCiudadIgnoreCaseContaining(ciudad);
+    }
 
-    Inmueble actualizar(Long id, Inmueble datos);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarPorPropietario(Long propietarioId) {
+        return inmuebleRepository.findByPropietarioId(propietarioId);
+    }
 
-    void eliminar(Long id);
+    @Transactional(readOnly = true)
+    public List<Inmueble> listarPorRangoPrecio(BigDecimal min, BigDecimal max) {
+        return inmuebleRepository.findByPrecioBetween(min, max);
+    }
+
+    public Inmueble actualizar(Long id, Inmueble datos) {
+        Inmueble existente = obtenerPorId(id);
+
+        existente.setTitulo(datos.getTitulo());
+        existente.setDescripcion(datos.getDescripcion());
+        existente.setPrecio(datos.getPrecio());
+        existente.setDireccion(datos.getDireccion());
+        existente.setCiudad(datos.getCiudad());
+        existente.setTipo(datos.getTipo());
+        existente.setOperacion(datos.getOperacion());
+        existente.setEstado(datos.getEstado());
+        existente.setArea(datos.getArea());
+        existente.setHabitaciones(datos.getHabitaciones());
+        existente.setBanos(datos.getBanos());
+
+        return inmuebleRepository.save(existente);
+    }
+
+    public void eliminar(Long id) {
+        Inmueble existente = obtenerPorId(id);
+        inmuebleRepository.delete(existente);
+    }
 }

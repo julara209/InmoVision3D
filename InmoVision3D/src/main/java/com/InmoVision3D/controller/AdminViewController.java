@@ -24,12 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Sirve el panel de administración (Admin/dashboard.html) y sus pestañas
- * (Admin/_tabs/_usuarios, _inmuebles, _reportes). En la app PHP original
- * este panel se armaba con requires() según ?tab=..., aquí se resuelve con
- * fragmentos de Thymeleaf.
- */
 @Controller
 @RequestMapping("/admin/dashboard")
 @PreAuthorize("hasRole('ADMIN')")

@@ -15,10 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-/**
- * Sirve /usuario/mis-inmuebles (no existía ningún @Controller para esta
- * vista; solo estaba la API REST /api/inmuebles).
- */
 @Controller
 @RequestMapping("/usuario/mis-inmuebles")
 @PreAuthorize("hasAnyRole('PUBLICADOR','ADMIN')")

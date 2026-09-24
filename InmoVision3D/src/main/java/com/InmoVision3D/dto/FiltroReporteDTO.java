@@ -2,8 +2,6 @@ package com.InmoVision3D.dto;
 
 /**
  * Filtros multicriterio para el módulo de Reportes.
- * Todos son opcionales: si vienen vacíos/null, InmuebleSpecification
- * simplemente los ignora.
  */
 public class FiltroReporteDTO {
 

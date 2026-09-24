@@ -8,10 +8,10 @@ import com.InmoVision3D.model.enums.EstadoSolicitud;
  *
  * Cada implementación reacciona a un cambio de estado de una
  * {@link Solicitud} (por ejemplo, cuando el publicador la acepta o la
- * rechaza) sin que {@code SolicitudServiceImpl} (el "sujeto") necesite saber
+ * rechaza) sin que {@code SolicitudService} (el "sujeto") necesite saber
  * cuántos observadores hay ni qué hacen. Spring inyecta automáticamente
  * todos los beans que implementen esta interfaz (ver el constructor de
- * {@code SolicitudServiceImpl}), así que agregar una reacción nueva —por
+ * {@code SolicitudService}), así que agregar una reacción nueva —por
  * ejemplo, enviar un correo real cuando haya un servicio de mail configurado—
  * es tan simple como crear otra clase con {@code @Component} y no requiere
  * tocar el servicio de solicitudes.

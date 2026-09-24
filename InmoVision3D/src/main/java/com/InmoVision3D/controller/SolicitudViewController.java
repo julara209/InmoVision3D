@@ -15,16 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-/**
- * Sirve /solicitudes. La vista se adapta según el rol de quien la ve:
- *  - CLIENTE:    historial de sus propias solicitudes (enviadas) + formulario
- *                para crear una nueva (vía ?nueva={inmuebleId}, enlazado
- *                desde el botón "Contactar" en el detalle del inmueble).
- *  - PUBLICADOR: solicitudes recibidas sobre sus propios inmuebles, con
- *                acciones para aceptar/rechazar.
- *  - ADMIN:      ve todas las solicitudes del sistema con las mismas
- *                acciones (además de lo que ya ve en el panel de admin).
- */
 @Controller
 @RequestMapping("/usuario")
 public class SolicitudViewController {

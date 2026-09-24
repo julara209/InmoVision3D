@@ -19,9 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Reemplaza index.php. Muestra los 6 inmuebles disponibles más recientes
- * como "destacados", igual que hacía $inmuebleModel->listar(['limite' => 6])
- * en el PHP original.
+ * Muestra los 6 inmuebles disponibles más recientes
+ * como "destacados".
  */
 @Controller
 public class HomeController {

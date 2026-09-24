@@ -26,7 +26,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Compatible con los hashes generados por password_hash() en PHP
         return new BCryptPasswordEncoder();
     }
 
@@ -42,8 +41,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // La API bajo /api/** es JSON consumida por fetch() desde el frontend,
-            // no formularios HTML con token anti-CSRF, así que se excluye aquí.
             .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
             .authorizeHttpRequests(auth -> auth
                 // públicas

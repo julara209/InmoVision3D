@@ -7,17 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-/**
- * Reemplaza a las funciones de config.php basadas en $_SESSION
- * (isLoggedIn(), $_SESSION['nombre'], etc.). Inyecta el usuario
- * autenticado (o null) en el Model de TODAS las vistas Thymeleaf,
- * para que header/nav puedan mostrar el nombre real sin repetir
- * esta consulta en cada controller.
- *
- * Los chequeos de rol (isPublicador()/isAdmin() en PHP) se hacen
- * en las plantillas con sec:authorize="hasRole('PUBLICADOR')" /
- * sec:authorize="hasRole('ADMIN')" gracias a thymeleaf-extras-springsecurity6.
- */
 @ControllerAdvice(annotations = Controller.class)
 public class GlobalModelAttributes {
 
