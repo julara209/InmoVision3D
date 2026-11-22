@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis observaciones - InmoVision 3D</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            margin: 0;
+            padding: 30px;
+            color: #333;
+        }
+
+        .contenedor {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #263b5e;
+        }
+
+        .inmueble {
+            background: white;
+            padding: 22px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #00000015;
+        }
+
+        .estado {
+            font-weight: bold;
+            color: #a94442;
+        }
+
+        .observacion {
+            background: #fff4e5;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .vacio {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contenedor">
+        <h1>Mis observaciones</h1>
+        <p>Consulta los motivos de rechazo o devolución de tus publicaciones.</p>
+
+        {% for inmueble in inmuebles %}
+            <div class="inmueble">
+                <h2>{{ inmueble.titulo }}</h2>
+
+                <p>
+                    Estado:
+                    <span class="estado">
+                        {{ inmueble.get_estado_revision_display }}
+                    </span>
+                </p>
+
+                <div class="observacion">
+                    <strong>Motivo de revisión:</strong>
+                    <p>{{ inmueble.observacion_revision }}</p>
+                </div>
+
+                <p>
+                    Fecha de revisión:
+                    {{ inmueble.fecha_revision|default:"No registrada" }}
+                </p>
+            </div>
+        {% empty %}
+            <div class="vacio">
+                No tienes publicaciones rechazadas o devueltas.
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
