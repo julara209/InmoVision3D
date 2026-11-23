@@ -3,9 +3,9 @@ spring:
     name: InmoVision3D
 
   datasource:
-    url: jdbc:mariadb://localhost:3307/inmovision3d
+    url: jdbc:mariadb://localhost:3306/inmovision3d
     username: root
-    password: ""
+    password: ${DB_PASSWORD:}
 
   jpa:
     hibernate:
@@ -23,9 +23,6 @@ spring:
       max-request-size: 25MB
 
 app:
-  # Las imágenes de inmuebles y los planos se guardan aquí:
-  #   src/main/resources/static/uploads/inmuebles
-  #   src/main/resources/static/uploads/planos
   upload-dir: src/main/resources/static/uploads
 
 server:

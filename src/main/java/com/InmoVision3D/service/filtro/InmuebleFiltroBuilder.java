@@ -2,6 +2,7 @@ package com.InmoVision3D.service.filtro;
 
 import com.InmoVision3D.model.Inmueble;
 import com.InmoVision3D.model.enums.EstadoInmueble;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.model.enums.TipoInmueble;
 import com.InmoVision3D.model.enums.TipoOperacion;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +33,15 @@ public final class InmuebleFiltroBuilder {
     public InmuebleFiltroBuilder conEstado(EstadoInmueble estado) {
         if (estado != null) {
             especificacion = especificacion.and((root, query, cb) -> cb.equal(root.get("estado"), estado));
+        }
+        return this;
+    }
+
+    /** Filtra por estado de publicacion (flujo de aprobacion). El catalogo publico usa APROBADA. */
+    public InmuebleFiltroBuilder conEstadoPublicacion(EstadoPublicacion estadoPublicacion) {
+        if (estadoPublicacion != null) {
+            especificacion = especificacion.and(
+                    (root, query, cb) -> cb.equal(root.get("estadoPublicacion"), estadoPublicacion));
         }
         return this;
     }

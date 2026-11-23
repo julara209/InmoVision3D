@@ -30,7 +30,7 @@ public class FavoritoViewController {
     @GetMapping
     public String favoritos(Model model, Authentication authentication) {
         Usuario usuario = usuarioService.obtenerPorEmail(authentication.getName());
-        List<Favorito> favoritos = favoritoService.listarPorUsuario(usuario.getId());
+        List<Favorito> favoritos = favoritoService.listarVisiblesPorUsuario(usuario.getId());
 
         List<Inmueble> inmuebles = favoritos.stream()
                 .map(Favorito::getInmueble)

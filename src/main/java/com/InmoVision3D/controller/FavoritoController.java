@@ -18,7 +18,6 @@ public class FavoritoController {
         this.favoritoService = favoritoService;
     }
 
-    // POST /api/favoritos?usuarioId=1&inmuebleId=2
     @PostMapping
     public ResponseEntity<Favorito> agregar(@RequestParam Long usuarioId, @RequestParam Long inmuebleId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(favoritoService.agregar(usuarioId, inmuebleId));
@@ -26,10 +25,9 @@ public class FavoritoController {
 
     @GetMapping("/usuario/{usuarioId}")
     public ResponseEntity<List<Favorito>> listarPorUsuario(@PathVariable Long usuarioId) {
-        return ResponseEntity.ok(favoritoService.listarPorUsuario(usuarioId));
+        return ResponseEntity.ok(favoritoService.listarVisiblesPorUsuario(usuarioId));
     }
 
-    // DELETE /api/favoritos?usuarioId=1&inmuebleId=2
     @DeleteMapping
     public ResponseEntity<Void> eliminar(@RequestParam Long usuarioId, @RequestParam Long inmuebleId) {
         favoritoService.eliminar(usuarioId, inmuebleId);

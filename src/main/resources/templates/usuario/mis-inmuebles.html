@@ -217,6 +217,10 @@
         .chip-vendido  { background: rgba(139,92,246,0.15);  color: #8b5cf6; }
         .chip-pausado  { background: rgba(100,116,139,0.15); color: var(--color-gray); }
         .chip-cliente  { background: rgba(148,163,184,0.1);  color: var(--color-gray-light); }
+        .chip-pub-pendiente { background: rgba(245,158,11,0.15); color: #f59e0b; }
+        .chip-pub-aprobada  { background: rgba(34,197,94,0.15);  color: #22c55e; }
+        .chip-pub-rechazada { background: rgba(239,68,68,0.15);  color: #ef4444; }
+        .chip-pub-devuelta  { background: rgba(139,92,246,0.15); color: #8b5cf6; }
 
         .price-cell { color: #0ea5e9; font-weight: 600; }
 
@@ -503,7 +507,7 @@
             </div>
             <div>
                 <h1>Mis inmuebles</h1>
-                <p>Administra las propiedades que has publicado</p>
+                <p>Administra las propiedades que has publicado. Los nuevos quedan en revisión hasta que un administrador los apruebe.</p>
             </div>
         </div>
         <button class="btn-nuevo" onclick="abrirModalCrearInmueble()">
@@ -582,12 +586,13 @@
                         <th>Operación</th>
                         <th>Precio</th>
                         <th>Estado</th>
+                        <th>Publicación</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyInmuebles">
                     <tr th:if="${inmuebles == null or inmuebles.isEmpty()}">
-                        <td colspan="8">
+                        <td colspan="9">
                             <div class="empty-state">
                                 <div class="empty-icon">🏠</div>
                                 <h3>Aún no tienes inmuebles publicados</h3>
@@ -641,6 +646,15 @@
                         <td><span class="chip" th:classappend="${chipOp}" th:text="${i.operacion}">Operación</span></td>
                         <td class="price-cell" th:text="${'$' + #numbers.formatDecimal(i.precio, 0, 'POINT', 0, 'NONE')}">$0</td>
                         <td><span class="chip" th:classappend="${chipEst}" th:text="${i.estado}">Estado</span></td>
+                        <td>
+                            <span class="chip"
+                                  th:with="ep=${i.estadoPublicacion != null ? i.estadoPublicacion.name() : 'PENDIENTE'}"
+                                  th:classappend="${'chip-pub-' + #strings.toLowerCase(ep)}"
+                                  th:text="${ep == 'PENDIENTE' ? 'En revisión' : (ep == 'APROBADA' ? 'Aprobada' : (ep == 'RECHAZADA' ? 'Rechazada' : 'Devuelta'))}">En revisión</span>
+                            <div th:if="${i.observacionRevision != null and !i.observacionRevision.isBlank()}"
+                                 style="font-size:.7rem;color:var(--color-gray);max-width:180px;margin-top:4px"
+                                 th:text="${i.observacionRevision}">Observación</div>
+                        </td>
 
                         <td>
                             <div class="tbl-actions">

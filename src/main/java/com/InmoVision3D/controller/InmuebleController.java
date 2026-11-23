@@ -1,7 +1,12 @@
 package com.InmoVision3D.controller;
 
 import com.InmoVision3D.model.Inmueble;
+import com.InmoVision3D.model.Usuario;
+import com.InmoVision3D.repository.UsuarioRepository;
+import org.springframework.security.core.Authentication;
 import com.InmoVision3D.model.enums.EstadoInmueble;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
+import com.InmoVision3D.model.enums.RolUsuario;
 import com.InmoVision3D.model.enums.TipoInmueble;
 import com.InmoVision3D.service.InmuebleService;
 import jakarta.validation.Valid;
@@ -17,12 +22,13 @@ import java.util.List;
 public class InmuebleController {
 
     private final InmuebleService inmuebleService;
+    private final UsuarioRepository usuarioRepository;
 
-    public InmuebleController(InmuebleService inmuebleService) {
+    public InmuebleController(InmuebleService inmuebleService, UsuarioRepository usuarioRepository) {
         this.inmuebleService = inmuebleService;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    // CREATE - POST /api/inmuebles?propietarioId=1
     @PostMapping
     public ResponseEntity<Inmueble> crear(@Valid @RequestBody Inmueble inmueble,
                                            @RequestParam Long propietarioId) {
@@ -33,13 +39,22 @@ public class InmuebleController {
     // READ - GET /api/inmuebles
     @GetMapping
     public ResponseEntity<List<Inmueble>> listarTodos() {
-        return ResponseEntity.ok(inmuebleService.listarTodos());
+        // Lectura publica: solo inmuebles APROBADA
+        return ResponseEntity.ok(inmuebleService.listarAprobados());
     }
 
     // READ - GET /api/inmuebles/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<Inmueble> obtenerPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(inmuebleService.obtenerPorId(id));
+    public ResponseEntity<Inmueble> obtenerPorId(@PathVariable Long id, Authentication authentication) {
+        return ResponseEntity.ok(inmuebleService.obtenerVisiblePara(id, usuarioActual(authentication)));
+    }
+
+    private Usuario usuarioActual(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            return null;
+        }
+        return usuarioRepository.findByEmail(authentication.getName()).orElse(null);
     }
 
     // READ - GET /api/inmuebles/estado/DISPONIBLE
@@ -62,8 +77,19 @@ public class InmuebleController {
 
     // READ - GET /api/inmuebles/propietario/{propietarioId}
     @GetMapping("/propietario/{propietarioId}")
-    public ResponseEntity<List<Inmueble>> listarPorPropietario(@PathVariable Long propietarioId) {
-        return ResponseEntity.ok(inmuebleService.listarPorPropietario(propietarioId));
+    public ResponseEntity<List<Inmueble>> listarPorPropietario(@PathVariable Long propietarioId,
+                                                                 Authentication authentication) {
+        List<Inmueble> inmuebles = inmuebleService.listarPorPropietario(propietarioId);
+        Usuario usuario = usuarioActual(authentication);
+        boolean verTodo = usuario != null
+                && (usuario.getRol() == RolUsuario.ADMIN || usuario.getId().equals(propietarioId));
+        if (!verTodo) {
+            // Publico u otro usuario: solo los aprobados. El dueño y el ADMIN ven todos.
+            inmuebles = inmuebles.stream()
+                    .filter(i -> i.getEstadoPublicacion() == EstadoPublicacion.APROBADA)
+                    .toList();
+        }
+        return ResponseEntity.ok(inmuebles);
     }
 
     // READ - GET /api/inmuebles/precio?min=100000&max=500000

@@ -5,6 +5,7 @@ import com.InmoVision3D.exception.ResourceNotFoundException;
 import com.InmoVision3D.model.Favorito;
 import com.InmoVision3D.model.Inmueble;
 import com.InmoVision3D.model.Usuario;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.repository.FavoritoRepository;
 import com.InmoVision3D.repository.InmuebleRepository;
 import com.InmoVision3D.repository.UsuarioRepository;
@@ -36,6 +37,10 @@ public class FavoritoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", usuarioId));
         Inmueble inmueble = inmuebleRepository.findById(inmuebleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Inmueble", inmuebleId));
+        if (inmueble.getEstadoPublicacion() != EstadoPublicacion.APROBADA) {
+            // No se revela que existe: para el usuario es como si no estuviera publicado
+            throw new ResourceNotFoundException("Inmueble", inmuebleId);
+        }
 
         Favorito favorito = new Favorito();
         favorito.setUsuario(usuario);
@@ -46,6 +51,11 @@ public class FavoritoService {
     @Transactional(readOnly = true)
     public List<Favorito> listarPorUsuario(Long usuarioId) {
         return favoritoRepository.findByUsuarioId(usuarioId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Favorito> listarVisiblesPorUsuario(Long usuarioId) {
+        return favoritoRepository.findByUsuarioIdAndInmuebleEstadoPublicacion(usuarioId, EstadoPublicacion.APROBADA);
     }
 
     @Transactional(readOnly = true)
