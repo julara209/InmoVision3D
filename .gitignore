@@ -1,3 +1,20 @@
+﻿# Entornos virtuales
+.venv/
+.venv-django/
+venv/
+
+# Base de datos local
+django_approval/db.sqlite3
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+
+# Variables de entorno
+.env
+.env.*
+
+# Archivos del editor
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
