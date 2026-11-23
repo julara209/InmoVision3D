@@ -48,6 +48,7 @@ de administración y generación de reportes para la toma de decisiones.
 
 - [Descripción](#descripción)
 - [Objetivos](#objetivos)
+- [Product Goal](#product-goal)
 - [Stack tecnológico](#stack-tecnológico)
 - [Requisitos previos](#requisitos-previos)
 - [Puesta en marcha](#puesta-en-marcha)
@@ -58,6 +59,8 @@ de administración y generación de reportes para la toma de decisiones.
 - [Estructura del proyecto](#estructura-del-proyecto)
 - [Rutas principales](#rutas-principales)
 - [Módulo de reportes](#módulo-de-reportes)
+- [Gestión del proyecto (Scrum)](#gestión-del-proyecto-scrum)
+- [Módulo complementario en Django](#módulo-complementario-en-django)
 - [Documentación técnica](#documentación-técnica)
   - [Casos de uso](#casos-de-uso)
   - [Arquitectura de componentes](#arquitectura-de-componentes)
@@ -76,6 +79,8 @@ de administración y generación de reportes para la toma de decisiones.
 | Reportes | Apache POI (Excel), OpenPDF (PDF), Apache POI (Word) |
 | Utilidades | Lombok |
 | Build | Maven |
+| Módulo complementario | Python 3, Django, pandas, mysqlclient |
+| Mapas | Leaflet + OpenStreetMap, API Nominatim (geocodificación) |
 
 ## Requisitos previos
 
@@ -273,6 +278,114 @@ reporte, cada uno exportable en **PDF, Excel o Word**:
 
 Los filtros son multicriterio y combinables: estado, tipo de operación (venta/arriendo),
 tipo de inmueble, publicador y texto de búsqueda libre (título o ubicación).
+
+## Product Goal
+
+Permitir que los clientes encuentren inmuebles en un mapa interactivo y los exploren con planos 2D y modelos 3D antes de visitarlos, que los publicadores carguen sus propiedades de forma masiva, y que un administrador revise cada publicación antes de mostrarla y consulte reportes con filtros combinables para tomar decisiones, garantizando así una plataforma inmobiliaria confiable.
+
+**Fuera de alcance en esta fase:** lectura de modelos BIM (IFC), planos de AutoCAD y una ciudad 3D completa. Quedan como trabajo futuro (ver issue #18).
+
+## Gestión del proyecto (Scrum)
+
+El trabajo se organiza en **2 Sprints de 3 días**. El séptimo día se reserva como colchón para correcciones y ensayo de la sustentación. Cada issue tiene su tipo (historia de usuario o tarea técnica), Story Points y prioridad.
+
+### Sprint 1 · Días 1 a 3
+
+**Sprint Goal:** Dejar funcionando el módulo Django conectado a la base de datos de InmoVision 3D, de modo que ninguna publicación nueva se muestre sin ser revisada por un administrador, y que los publicadores puedan cargar muchas propiedades desde un archivo CSV validado.
+
+| ID | Issue | Rol | Puntos | Prioridad |
+|---|---|---|---|---|
+| T-01 | [Configurar proyecto Django y conexión a MySQL](https://github.com/julara209/InmoVision3D/issues/1) | N/A | 3 | Alta |
+| HU-015 | [Toda publicación nueva queda pendiente de revisión](https://github.com/julara209/InmoVision3D/issues/21) | Administrador | 3 | Alta |
+| HU-001 | [Inicio de sesión del publicador](https://github.com/julara209/InmoVision3D/issues/4) | Publicador | 3 | Alta |
+| HU-002 | [El cliente consulta el mapa con su cuenta existente](https://github.com/julara209/InmoVision3D/issues/5) | Cliente | 1 | Media |
+| HU-003 | [Acceso restringido por rol](https://github.com/julara209/InmoVision3D/issues/6) | Administrador | 2 | Alta |
+| HU-004 | [Validación de formularios y mensajes de error claros](https://github.com/julara209/InmoVision3D/issues/7) | Publicador | 2 | Alta |
+| HU-005 | [Revisar y aprobar publicaciones](https://github.com/julara209/InmoVision3D/issues/8) | Administrador | 5 | Alta |
+| HU-006 | [Ver el motivo de rechazo o devolución](https://github.com/julara209/InmoVision3D/issues/9) | Publicador | 2 | Alta |
+| HU-007 | [Carga inicial de datos de demostración](https://github.com/julara209/InmoVision3D/issues/10) | Administrador | 2 | Alta |
+| HU-008 | [Cargar propiedades masivamente desde CSV](https://github.com/julara209/InmoVision3D/issues/11) | Publicador | 5 | Alta |
+| HU-009 | [Informe de errores de la carga masiva](https://github.com/julara209/InmoVision3D/issues/12) | Publicador | 2 | Alta |
+
+**Total: 30 puntos.**
+
+### Sprint 2 · Días 4 a 6
+
+**Sprint Goal:** Permitir que los clientes encuentren los inmuebles aprobados en un mapa interactivo que consume un servicio externo, que el administrador analice las publicaciones con reportes estadísticos de filtros combinables, y dejar listos el presupuesto, la propuesta de negociación y la sustentación.
+
+| ID | Issue | Rol | Puntos | Prioridad |
+|---|---|---|---|---|
+| HU-010 | [Ver los inmuebles en un mapa](https://github.com/julara209/InmoVision3D/issues/13) | Cliente | 5 | Alta |
+| HU-011 | [Ver la ficha del inmueble desde el mapa](https://github.com/julara209/InmoVision3D/issues/14) | Cliente | 2 | Alta |
+| HU-012 | [Reporte estadístico de publicaciones con filtros combinados](https://github.com/julara209/InmoVision3D/issues/15) | Administrador | 5 | Alta |
+| HU-013 | [Resumen de publicaciones por estado de revisión](https://github.com/julara209/InmoVision3D/issues/16) | Administrador | 2 | Alta |
+| HU-014 | [Estadísticas de mis propiedades](https://github.com/julara209/InmoVision3D/issues/17) | Publicador | 2 | Media |
+| T-04 | [Conectar la aplicación Spring Boot con Django](https://github.com/julara209/InmoVision3D/issues/18) | N/A | 1 | Media |
+| T-02 | [Presupuesto de elaboración alineado con el Sprint](https://github.com/julara209/InmoVision3D/issues/2) | N/A | 2 | Alta |
+| T-03 | [Propuesta de negociación tecnológica](https://github.com/julara209/InmoVision3D/issues/3) | N/A | 3 | Alta |
+| T-05 | [Pruebas y datos de demostración](https://github.com/julara209/InmoVision3D/issues/19) | N/A | 3 | Alta |
+
+**Total: 25 puntos.**
+
+### Backlog futuro
+
+| Issue | Épica | Prioridad |
+|---|---|---|
+| [Soporte BIM y planos AutoCAD](https://github.com/julara209/InmoVision3D/issues/20) | Lectura de IFC y planos DXF | Baja |
+
+### Definición de terminado
+
+Un issue se considera terminado cuando:
+
+- Cumple todos sus criterios de aceptación.
+- Fue probado por al menos un integrante distinto a quien lo desarrolló.
+- El código está en la rama principal mediante un pull request revisado.
+- No expone contraseñas ni datos sensibles.
+- Está documentado en el README si agrega algo nuevo.
+
+## Módulo complementario en Django
+
+La aplicación Spring Boot sigue siendo el núcleo del sistema. El módulo Django comparte su base de datos MariaDB y agrega las funciones de aprobación de publicaciones, carga masiva, mapa y estadísticas.
+
+```
+Navegador ──► Spring Boot (http://localhost:8080) ──┐
+         └──► Django      (http://localhost:8000) ──┴──► MariaDB (inmovision3d)
+```
+
+- Los modelos de Django se generan con `inspectdb` y usan `managed = False`: **el esquema lo gestiona Hibernate**, no Django.
+- Los usuarios inician sesión en Django con las mismas credenciales de InmoVision 3D.
+- Servicios externos: OpenStreetMap (mapa) y Nominatim (geocodificación de direcciones).
+
+### Puesta en marcha del módulo Django
+
+Requisitos: Python 3.11 o superior y la base de datos `inmovision3d` ya creada por la aplicación Spring Boot.
+
+```bash
+cd inmovision_django
+python -m venv venv
+source venv/bin/activate        # En Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env            # Completar usuario y contraseña de la base de datos
+python manage.py runserver 8000
+```
+
+El módulo queda disponible en **http://localhost:8000**.
+
+Comando para cargar los datos de demostración (usuarios de cada rol e inmuebles de ejemplo):
+
+```bash
+python manage.py cargar_demo
+```
+
+### Carga masiva de propiedades
+
+Plantilla CSV con estas columnas:
+
+```
+titulo,descripcion,tipo,operacion,ciudad,direccion,precio,area,habitaciones,banos
+```
+
+Las propiedades cargadas entran con estado de publicación `PENDIENTE` y pasan por la revisión de un administrador antes de mostrarse.
 
 ## Documentación técnica
 
