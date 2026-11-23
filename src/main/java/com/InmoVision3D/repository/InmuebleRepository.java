@@ -2,6 +2,7 @@ package com.InmoVision3D.repository;
 
 import com.InmoVision3D.model.Inmueble;
 import com.InmoVision3D.model.enums.EstadoInmueble;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.model.enums.TipoInmueble;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,6 +11,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface InmuebleRepository extends JpaRepository<Inmueble, Long>, JpaSpecificationExecutor<Inmueble> {
+
+    List<Inmueble> findByEstadoPublicacion(EstadoPublicacion estadoPublicacion);
+
+    List<Inmueble> findByEstadoAndEstadoPublicacion(EstadoInmueble estado, EstadoPublicacion estadoPublicacion);
+
+    List<Inmueble> findByTipoAndEstadoPublicacion(TipoInmueble tipo, EstadoPublicacion estadoPublicacion);
+
+    List<Inmueble> findByCiudadIgnoreCaseContainingAndEstadoPublicacion(String ciudad, EstadoPublicacion estadoPublicacion);
+
+    List<Inmueble> findByPrecioBetweenAndEstadoPublicacion(BigDecimal min, BigDecimal max, EstadoPublicacion estadoPublicacion);
 
     List<Inmueble> findByEstado(EstadoInmueble estado);
 

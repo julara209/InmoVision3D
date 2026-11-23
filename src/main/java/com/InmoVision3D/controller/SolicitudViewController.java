@@ -56,7 +56,7 @@ public class SolicitudViewController {
 
         // Formulario de nueva solicitud (solo tiene sentido para un cliente)
         if (nueva != null && rol.equals("CLIENTE")) {
-            Inmueble inmueble = inmuebleService.obtenerPorId(nueva);
+            Inmueble inmueble = inmuebleService.obtenerVisiblePara(nueva, usuarioActual);
             model.addAttribute("inmuebleNuevaSolicitud", inmueble);
         }
 

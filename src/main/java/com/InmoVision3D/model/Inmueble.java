@@ -1,5 +1,6 @@
 package com.InmoVision3D.model;
 
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.model.enums.EstadoInmueble;
 import com.InmoVision3D.model.enums.TipoInmueble;
 import com.InmoVision3D.model.enums.TipoOperacion;
@@ -61,6 +62,14 @@ public class Inmueble {
     @Column(nullable = false, length = 30)
     private EstadoInmueble estado = EstadoInmueble.DISPONIBLE;
 
+    /** Estado del flujo de aprobacion (independiente de {@link #estado}, que es la disponibilidad). */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_publicacion", length = 20)
+    private EstadoPublicacion estadoPublicacion = EstadoPublicacion.PENDIENTE;
+
+    @Column(name = "observacion_revision", length = 500)
+    private String observacionRevision;
+
     @PositiveOrZero
     private Double area;
 
@@ -98,11 +107,6 @@ public class Inmueble {
         this.fechaPublicacion = LocalDateTime.now();
     }
 
-    /**
-     * Reemplaza al campo plano "imagen_principal" que traían las
-     * consultas SQL en PHP. Busca la imagen marcada como principal
-     * y, si no hay ninguna, cae a la primera imagen disponible.
-     */
     @Transient
     public String getImagenPrincipalUrl() {
         return imagenes.stream()

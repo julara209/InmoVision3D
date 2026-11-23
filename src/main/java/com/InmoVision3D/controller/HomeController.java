@@ -3,6 +3,7 @@ package com.InmoVision3D.controller;
 import com.InmoVision3D.model.Inmueble;
 import com.InmoVision3D.model.Usuario;
 import com.InmoVision3D.model.enums.EstadoInmueble;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.repository.FavoritoRepository;
 import com.InmoVision3D.repository.InmuebleRepository;
 import com.InmoVision3D.repository.UsuarioRepository;
@@ -41,7 +42,9 @@ public class HomeController {
     public String home(Authentication authentication, Model model) {
 
         Specification<Inmueble> disponibles =
-                (root, query, cb) -> cb.equal(root.get("estado"), EstadoInmueble.DISPONIBLE);
+                (root, query, cb) -> cb.and(
+                        cb.equal(root.get("estado"), EstadoInmueble.DISPONIBLE),
+                        cb.equal(root.get("estadoPublicacion"), EstadoPublicacion.APROBADA));
 
         List<Inmueble> destacados = inmuebleRepository.findAll(
                 disponibles,

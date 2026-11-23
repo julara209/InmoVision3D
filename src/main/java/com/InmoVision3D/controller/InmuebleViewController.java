@@ -3,6 +3,7 @@ package com.InmoVision3D.controller;
 import com.InmoVision3D.model.Inmueble;
 import com.InmoVision3D.model.Usuario;
 import com.InmoVision3D.model.enums.EstadoInmueble;
+import com.InmoVision3D.model.enums.EstadoPublicacion;
 import com.InmoVision3D.model.enums.TipoInmueble;
 import com.InmoVision3D.model.enums.TipoOperacion;
 import com.InmoVision3D.repository.FavoritoRepository;
@@ -60,6 +61,7 @@ public class InmuebleViewController {
         // catálogo público y los reportes interpretan cada filtro igual.
         Specification<Inmueble> spec = InmuebleFiltroBuilder.nuevo()
                 .conEstado(EstadoInmueble.DISPONIBLE)
+                .conEstadoPublicacion(EstadoPublicacion.APROBADA)
                 .conTipo(parseEnumSeguro(TipoInmueble.class, tipo))
                 .conUbicacion(ubicacion)
                 .conOperacion(parseEnumSeguro(TipoOperacion.class, operacion))
@@ -88,10 +90,11 @@ public class InmuebleViewController {
 
     @GetMapping("/{id}")
     public String detalle(@PathVariable Long id, Authentication authentication, Model model) {
-        Inmueble inmueble = inmuebleService.obtenerPorId(id);
+        Usuario usuarioActual = usuarioActual(authentication);
+        // Publico: solo APROBADA. El propietario y el ADMIN pueden ver su inmueble en cualquier estado.
+        Inmueble inmueble = inmuebleService.obtenerVisiblePara(id, usuarioActual);
         model.addAttribute("inmueble", inmueble);
 
-        Usuario usuarioActual = usuarioActual(authentication);
         model.addAttribute("usuarioActual", usuarioActual);
         boolean esFavorito = usuarioActual != null
                 && favoritoRepository.existsByUsuarioIdAndInmuebleId(usuarioActual.getId(), id);
