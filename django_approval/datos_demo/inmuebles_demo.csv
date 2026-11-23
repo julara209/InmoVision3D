@@ -1,0 +1,4 @@
+﻿java_id,titulo,descripcion,precio,direccion,ciudad,tipo,operacion,estado_comercial,area,habitaciones,banos
+880001,Casa de demostracion,Casa familiar de prueba,250000000,Calle 10 # 5-20,Bogota,CASA,VENTA,DISPONIBLE,120,3,2
+880002,Apartamento de prueba,Apartamento para demostracion,180000000,Carrera 8 # 12-30,Chia,APARTAMENTO,VENTA,DISPONIBLE,75,2,2
+880003,Local comercial,Local para demostracion,1500000,Calle 15 # 10-20,Soacha,LOCAL_COMERCIAL,ARRIENDO,DISPONIBLE,50,0,1
