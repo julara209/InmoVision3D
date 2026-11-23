@@ -101,7 +101,10 @@ class Inmueble(models.Model):
     banos = models.PositiveIntegerField(null=True, blank=True)
     fecha_publicacion = models.DateTimeField(null=True, blank=True)
 
-    propietario_java_id = models.PositiveBigIntegerField(null=True, blank=True)
+    propietario_java_id = models.PositiveBigIntegerField(
+        null=True,
+        blank=True
+    )
     propietario_nombre = models.CharField(max_length=100, blank=True)
     propietario_apellido = models.CharField(max_length=100, blank=True)
     propietario_email = models.EmailField(blank=True)
@@ -133,6 +136,11 @@ class Inmueble(models.Model):
 
     def clean(self):
         super().clean()
+
+        if self.precio is not None and self.precio <= 0:
+            raise ValidationError({
+                "precio": "El precio debe ser mayor que cero."
+            })
 
         if self.estado_revision in [
             self.EstadoRevision.RECHAZADA,
