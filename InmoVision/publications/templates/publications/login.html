@@ -1,0 +1,56 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Iniciar Sesión - InmoVision 3D{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block cuerpo %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Iniciar Sesión</h2>
+
+        {% for mensaje in messages %}
+            <div class="alert {% if mensaje.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                {{ mensaje }}
+            </div>
+        {% endfor %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Correo electrónico</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                <div class="pw-wrap">
+                    {{ form.password }}
+                    <button type="button" class="pw-toggle" data-target="{{ form.password.id_for_label }}"
+                            aria-label="Mostrar u ocultar contraseña">
+                        {% include "publications/_ojo.html" %}
+                    </button>
+                </div>
+                {{ form.password.errors }}
+            </div>
+
+            {% if request.GET.next %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Ingresar</button>
+        </form>
+
+        <div class="auth-extra">
+            <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Regístrate</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

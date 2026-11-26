@@ -1,0 +1,6 @@
+# Dependencias del módulo Django de InmoVision 3D.
+# Instalar con:  pip install -r requirements.txt
+
+Django>=6.1.3,<6.2
+mysqlclient>=2.2,<3
+python-dotenv>=1.0,<2

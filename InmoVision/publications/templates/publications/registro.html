@@ -1,0 +1,66 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Crear Cuenta - InmoVision 3D{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block cuerpo %}
+<div class="auth-container">
+    <div class="auth-box">
+        <h2>Crear Cuenta</h2>
+        <p class="auth-sub">Con tu cuenta de cliente podrás consultar los inmuebles aprobados.</p>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+                {{ form.nombre }}
+                {{ form.nombre.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.correo.id_for_label }}">Correo electrónico</label>
+                {{ form.correo }}
+                {{ form.correo.errors }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password1.id_for_label }}">Contraseña</label>
+                <div class="pw-wrap">
+                    {{ form.password1 }}
+                    <button type="button" class="pw-toggle" data-target="{{ form.password1.id_for_label }}"
+                            aria-label="Mostrar u ocultar contraseña">
+                        {% include "publications/_ojo.html" %}
+                    </button>
+                </div>
+                {{ form.password1.errors }}
+                <span class="form-hint">Mínimo 8 caracteres, que no sea común ni solo números.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password2.id_for_label }}">Confirmar contraseña</label>
+                <div class="pw-wrap">
+                    {{ form.password2 }}
+                    <button type="button" class="pw-toggle" data-target="{{ form.password2.id_for_label }}"
+                            aria-label="Mostrar u ocultar contraseña">
+                        {% include "publications/_ojo.html" %}
+                    </button>
+                </div>
+                {{ form.password2.errors }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Crear cuenta</button>
+        </form>
+
+        <div class="auth-extra">
+            <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
