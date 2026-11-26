@@ -1,0 +1,46 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Mis inmuebles - InmoVision 3D{% endblock %}
+
+{% block contenido %}
+<h1 class="page-title">Mis inmuebles</h1>
+<p class="page-sub">Aquí solo aparecen las propiedades que tú publicaste.</p>
+
+<div class="acciones">
+    <a class="btn btn-primary" href="{% url 'cargar_inmuebles_csv' %}">Cargar inmuebles desde CSV</a>
+    <a class="btn btn-secondary" href="{% url 'mis_observaciones' %}">Ver observaciones</a>
+</div>
+
+{% if inmuebles %}
+    <div class="tabla-wrap">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Ciudad</th>
+                    <th>Operación</th>
+                    <th>Precio</th>
+                    <th>Revisión</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inmueble in inmuebles %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detalle_inmueble_propio' inmueble.pk %}">{{ inmueble.titulo }}</a>
+                        </td>
+                        <td>{{ inmueble.ciudad|default:"-" }}</td>
+                        <td>{{ inmueble.get_operacion_display }}</td>
+                        <td>${{ inmueble.precio|floatformat:"0g" }}</td>
+                        <td>
+                            <span class="chip {{ inmueble.estado_revision }}">{{ inmueble.get_estado_revision_display }}</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="vacio">Todavía no tienes inmuebles. Carga un archivo CSV para empezar.</div>
+{% endif %}
+{% endblock %}

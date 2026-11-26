@@ -1,0 +1,30 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Mis observaciones - InmoVision 3D{% endblock %}
+
+{% block contenido %}
+<h1 class="page-title">Mis observaciones</h1>
+<p class="page-sub">Consulta los motivos de rechazo o devolución de tus publicaciones.</p>
+
+{% for inmueble in inmuebles %}
+    <div class="panel">
+        <h2>{{ inmueble.titulo }}</h2>
+
+        <p>
+            Estado:
+            <span class="chip {{ inmueble.estado_revision }}">{{ inmueble.get_estado_revision_display }}</span>
+        </p>
+
+        <div class="observacion">
+            <strong>Motivo de revisión:</strong>
+            <p>{{ inmueble.observacion_revision }}</p>
+        </div>
+
+        <p class="ayuda" style="margin-top: 12px;">
+            Fecha de revisión: {{ inmueble.fecha_revision|default:"No registrada" }}
+        </p>
+    </div>
+{% empty %}
+    <div class="vacio">No tienes publicaciones rechazadas o devueltas.</div>
+{% endfor %}
+{% endblock %}

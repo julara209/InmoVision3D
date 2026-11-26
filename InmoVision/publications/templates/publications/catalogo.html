@@ -1,0 +1,39 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Catálogo - InmoVision 3D{% endblock %}
+
+{% block contenido %}
+<h1 class="page-title">Inmuebles disponibles</h1>
+<p class="page-sub">Solo se muestran publicaciones aprobadas por un administrador.</p>
+
+{% if inmuebles %}
+    <div class="tabla-wrap">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Ciudad</th>
+                    <th>Operación</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inmueble in inmuebles %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'detalle_inmueble_publico' inmueble.pk %}">{{ inmueble.titulo }}</a>
+                        </td>
+                        <td>{{ inmueble.get_tipo_display }}</td>
+                        <td>{{ inmueble.ciudad|default:"-" }}</td>
+                        <td>{{ inmueble.get_operacion_display }}</td>
+                        <td>${{ inmueble.precio|floatformat:"0g" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="vacio">Todavía no hay inmuebles aprobados.</div>
+{% endif %}
+{% endblock %}

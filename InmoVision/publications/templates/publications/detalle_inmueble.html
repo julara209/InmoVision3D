@@ -1,0 +1,40 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}{{ inmueble.titulo }} - InmoVision 3D{% endblock %}
+
+{% block contenido %}
+<div class="acciones">
+    <a class="btn btn-secondary btn-sm" href="{% if es_propio %}{% url 'panel_publicador' %}{% else %}{% url 'catalogo' %}{% endif %}">&larr; Volver</a>
+</div>
+
+<div class="panel">
+    <h1 class="page-title">{{ inmueble.titulo }}</h1>
+    <p class="page-sub">{{ inmueble.direccion }}{% if inmueble.ciudad %}, {{ inmueble.ciudad }}{% endif %}</p>
+
+    {% if es_propio %}
+        <p>
+            Estado de revisión:
+            <span class="chip {{ inmueble.estado_revision }}">{{ inmueble.get_estado_revision_display }}</span>
+        </p>
+
+        {% if inmueble.observacion_revision %}
+            <div class="observacion">
+                <strong>Observación del administrador:</strong>
+                <p>{{ inmueble.observacion_revision }}</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <p class="precio highlight" style="margin-top: 18px;">${{ inmueble.precio|floatformat:"0g" }}</p>
+
+    <div class="datos">
+        <div class="dato"><span>Tipo</span><strong>{{ inmueble.get_tipo_display }}</strong></div>
+        <div class="dato"><span>Operación</span><strong>{{ inmueble.get_operacion_display }}</strong></div>
+        {% if inmueble.area %}<div class="dato"><span>Área</span><strong>{{ inmueble.area }} m²</strong></div>{% endif %}
+        {% if inmueble.habitaciones is not None %}<div class="dato"><span>Habitaciones</span><strong>{{ inmueble.habitaciones }}</strong></div>{% endif %}
+        {% if inmueble.banos is not None %}<div class="dato"><span>Baños</span><strong>{{ inmueble.banos }}</strong></div>{% endif %}
+    </div>
+
+    <p>{{ inmueble.descripcion|default:"Sin descripción." }}</p>
+</div>
+{% endblock %}

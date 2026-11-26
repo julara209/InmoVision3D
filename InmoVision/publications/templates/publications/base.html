@@ -1,0 +1,79 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}InmoVision 3D{% endblock %}</title>
+
+    {# Mismo diseño que la aplicación Java: styles.css es una copia exacta #}
+    <link rel="icon" type="image/png" href="{% static 'publications/img/logo.png' %}">
+    <link rel="stylesheet" href="{% static 'publications/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'publications/css/django.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="{% static 'publications/js/theme.js' %}"></script>
+</head>
+
+<body class="{% block body_class %}app-page{% endblock %}">
+    <header class="adm-header">
+        <a href="{% url 'inicio' %}" class="adm-logo">
+            <img src="{% static 'publications/img/logo.png' %}" alt="InmoVision 3D logo">
+            <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
+        </a>
+
+        {% with vista=request.resolver_match.url_name %}
+        <nav class="adm-header-nav">
+            {% if user.is_authenticated %}
+                {% if rol == "publicador" %}
+                    <a href="{% url 'panel_publicador' %}" class="{% if vista == 'panel_publicador' or vista == 'detalle_inmueble_propio' %}active{% endif %}">Mis inmuebles</a>
+                    <a href="{% url 'cargar_inmuebles_csv' %}" class="{% if vista == 'cargar_inmuebles_csv' %}active{% endif %}">Carga masiva</a>
+                {% endif %}
+                <a href="{% url 'catalogo' %}" class="{% if vista == 'catalogo' or vista == 'detalle_inmueble_publico' %}active{% endif %}">Catálogo</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="{% if vista == 'login' %}active{% endif %}">Iniciar sesión</a>
+                <a href="{% url 'registro' %}" class="{% if vista == 'registro' %}active{% endif %}">Crear cuenta</a>
+            {% endif %}
+        </nav>
+        {% endwith %}
+
+        {% if user.is_authenticated %}
+            <div class="adm-profile" id="profileBtn">
+                <div class="avatar">{{ user.first_name|default:user.username|slice:":2"|upper }}</div>
+                <span class="pname">{{ user.first_name|default:user.username }}</span>
+                {% if rol %}<span class="rol-badge">{{ rol }}</span>{% endif %}
+
+                <div class="adm-dropdown" id="profileDropdown">
+                    {% if rol == "publicador" %}
+                        <a href="{% url 'panel_publicador' %}">Mis inmuebles</a>
+                        <a href="{% url 'mis_observaciones' %}">Mis observaciones</a>
+                        <a href="{% url 'cargar_inmuebles_csv' %}">Carga masiva</a>
+                    {% endif %}
+                    <a href="{% url 'catalogo' %}">Catálogo</a>
+                    {% if rol == "administrador" %}
+                        <hr>
+                        <a href="{% url 'admin:index' %}">Panel de administración</a>
+                    {% endif %}
+                    <hr>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="dd-item">Cerrar sesión</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </header>
+
+    {% block cuerpo %}
+    <main class="app-main">
+        {% for mensaje in messages %}
+            <div class="alert {% if mensaje.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                {{ mensaje }}
+            </div>
+        {% endfor %}
+
+        {% block contenido %}{% endblock %}
+    </main>
+    {% endblock %}
+
+    <script src="{% static 'publications/js/perfil.js' %}"></script>
+</body>
+</html>
