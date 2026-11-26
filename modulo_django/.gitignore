@@ -1,0 +1,11 @@
+# Credenciales y entorno: NUNCA se suben
+.env
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Salida local de inspectdb (solo para comparar)
+inspectdb_salida.py

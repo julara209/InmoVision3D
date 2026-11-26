@@ -1,0 +1,75 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mapa de inmuebles - InmoVision 3D</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="{% static 'core/css/mapa.css' %}">
+</head>
+<body{% if embed %} class="embed"{% endif %}>
+  {% if not embed %}
+  <header class="barra">
+    <a class="marca" href="{{ spring_url }}/">InmoVision <span>3D</span></a>
+    <nav>
+      <a href="{{ spring_url }}/">Inicio</a>
+      <a href="{{ spring_url }}/inmuebles">Inmuebles</a>
+      <a href="{% url 'mapa' %}" class="activo">Mapa</a>
+    </nav>
+  </header>
+  {% endif %}
+
+  <div class="mapa-wrap">
+    <div id="mapa" data-api="{% url 'api_inmuebles' %}"></div>
+
+    <div class="mapa-filtros" id="filtros">
+      <button class="chip activo" data-filtro="operacion" data-valor="">Venta y arriendo</button>
+      <button class="chip" data-filtro="operacion" data-valor="VENTA">Venta</button>
+      <button class="chip" data-filtro="operacion" data-valor="ARRIENDO">Arriendo</button>
+      <span class="chip-sep"></span>
+      <button class="chip activo" data-filtro="tipo" data-valor="">Todos</button>
+      <button class="chip" data-filtro="tipo" data-valor="CASA">Casa</button>
+      <button class="chip" data-filtro="tipo" data-valor="APARTAMENTO">Apartamento</button>
+      <button class="chip" data-filtro="tipo" data-valor="LOCAL_COMERCIAL">Local</button>
+      <button class="chip" data-filtro="tipo" data-valor="OFICINA">Oficina</button>
+      <button class="chip" data-filtro="tipo" data-valor="TERRENO">Terreno</button>
+      <button class="chip" data-filtro="tipo" data-valor="BODEGA">Bodega</button>
+    </div>
+
+    <div class="mapa-aviso" id="aviso"></div>
+
+    <aside class="mapa-panel" id="panel" aria-live="polite">
+      <button class="cerrar" id="cerrar" aria-label="Cerrar">&times;</button>
+      <img id="p-img" alt="Foto del inmueble">
+      <div class="cuerpo">
+        <div class="badges">
+          <span class="badge" id="p-tipo"></span>
+          <span class="badge op" id="p-oper"></span>
+        </div>
+        <p class="precio" id="p-precio"></p>
+        <p class="titulo" id="p-titulo"></p>
+        <p class="meta" id="p-dir"></p>
+
+        <div class="datos">
+          <div><strong id="d-area"></strong><span>Área</span></div>
+          <div><strong id="d-hab"></strong><span>Habitaciones</span></div>
+          <div><strong id="d-ban"></strong><span>Baños</span></div>
+        </div>
+
+        <p class="seccion">Plano y recorrido</p>
+        <a class="btn-panel sec" id="p-plano">Ver plano 2D</a>
+        <a class="btn-panel sec" id="p-3d">Ver recorrido 3D</a>
+        <p class="aviso-planos" id="p-aviso" hidden></p>
+
+        <a class="enlace-detalle" id="p-link" href="#" target="_blank" rel="noopener">Ver todos los detalles del inmueble &rarr;</a>
+      </div>
+    </aside>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="{% static 'core/js/mapa.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="usuario-id" th:content="${usuarioActual != null ? usuarioActual.id : ''}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" th:href="@{/img/logo.png}" type="image/png" />
+    <title>Explorar Inmuebles - InmoVision 3D</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body>
+       <!-- Header -->
+    <header class="adm-header">
+        <a th:href="@{/}" class="adm-logo">
+            <img th:src="@{/img/logo.png}" alt="InmoVision 3D logo">
+            <span class="logo-text">InmoVision <span class="highlight">3D</span></span>
+        </a>
+
+        <nav class="adm-header-nav" id="mainNav">
+            <a th:href="@{/}">Inicio</a>
+            <a th:href="@{/inmuebles}" class="active"> Inmuebles</a>
+            <a th:href="@{/inmuebles/publicar}" sec:authorize="hasAnyRole('PUBLICADOR','ADMIN')">Publicar</a>
+        </nav>
+
+        <div class="adm-profile" id="profileBtn" sec:authorize="isAuthenticated()">
+            <div class="avatar" th:text="${#strings.substring(usuarioActual.nombre, 0, 2).toUpperCase()}">--</div>
+            <span class="pname" th:text="${usuarioActual.nombre}">Usuario</span>
+            <div class="adm-dropdown" id="profileDropdown">
+                <a th:href="@{/usuario/perfil}">Mi perfil</a>
+                <a th:href="@{/usuario/mis-inmuebles}" sec:authorize="hasAnyRole('PUBLICADOR','ADMIN')">Mis Inmuebles</a>
+                <a th:href="@{/usuario/favoritos}">Favoritos</a>
+                <a th:href="@{/usuario/solicitudes}">Solicitudes</a>
+                <hr sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">Panel Admin</a>
+                <hr>
+                <a th:href="@{/auth/logout}">Cerrar sesión</a>
+            </div>
+        </div>
+
+        <a th:href="@{/auth/login}" class="btn-login-adm" sec:authorize="!isAuthenticated()">Iniciar Sesión</a>
+    </header>
+
+    <main style="padding-top: 100px;">
+        <section class="section-container">
+            <h1 class="section-title">Explorar <span class="highlight">Inmuebles</span></h1>
+
+            <!-- Filtros -->
+            <form class="filtros-top" method="GET" style="margin-bottom: 40px;">
+                <select name="tipo">
+                    <option value="">Todos los tipos</option>
+                    <option value="CASA" th:selected="${tipo == 'CASA'}">Casa</option>
+                    <option value="APARTAMENTO" th:selected="${tipo == 'APARTAMENTO'}">Apartamento</option>
+                    <option value="LOCAL_COMERCIAL" th:selected="${tipo == 'LOCAL_COMERCIAL'}">Local comercial</option>
+                    <option value="OFICINA" th:selected="${tipo == 'OFICINA'}">Oficina</option>
+                    <option value="TERRENO" th:selected="${tipo == 'TERRENO'}">Terreno</option>
+                    <option value="BODEGA" th:selected="${tipo == 'BODEGA'}">Bodega</option>
+                </select>
+
+                <input type="text" name="ubicacion" placeholder="Ubicación" th:value="${ubicacion}">
+
+                <select name="operacion">
+                    <option value="">Todas las operaciones</option>
+                    <option value="VENTA" th:selected="${operacion == 'VENTA'}">Venta</option>
+                    <option value="ARRIENDO" th:selected="${operacion == 'ARRIENDO'}">Arriendo</option>
+                </select>
+
+                <input type="number" name="precio_max" placeholder="Precio máximo" th:value="${precioMax}">
+
+                <input type="number" name="habitaciones" placeholder="Habitaciones mín." th:value="${habitaciones}">
+
+                <button type="submit" class="btn-filtrar">Filtrar</button>
+            </form>
+
+            <p style="color: var(--color-gray-light); margin-bottom: 30px;">
+                Mostrando <span th:text="${#lists.size(inmuebles)}">0</span> de <span th:text="${total}">0</span> inmuebles
+            </p>
+
+            <!-- Grid de inmuebles -->
+            <div class="inmuebles-grid">
+                <div th:if="${#lists.isEmpty(inmuebles)}" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                    <h3>No se encontraron inmuebles</h3>
+                    <p style="color: var(--color-gray-light);">Intenta con otros filtros de búsqueda</p>
+                </div>
+
+                <div class="inmueble-card" th:each="inmueble : ${inmuebles}">
+                    <div class="card-image">
+                        <img th:src="${inmueble.imagenPrincipalUrl}" th:alt="${inmueble.titulo}">
+                        <span class="card-badge" th:classappend="${inmueble.operacion.name() == 'ARRIENDO'} ? 'arriendo' : ''"
+                              th:text="${#strings.capitalize(#strings.toLowerCase(inmueble.operacion.name()))}">Venta</span>
+                        <button class="btn-favorite" th:classappend="${favoritosIds.contains(inmueble.id)} ? 'active' : ''"
+                                th:data-inmueble-id="${inmueble.id}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <h3><a th:href="@{/inmuebles/{id}(id=${inmueble.id})}" th:text="${inmueble.titulo}">Título</a></h3>
+                        <p class="card-location">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span th:text="${inmueble.direccion + (inmueble.ciudad != null ? ', ' + inmueble.ciudad : '')}">Dirección</span>
+                        </p>
+                        <div class="card-features">
+                            <span th:text="${inmueble.habitaciones} + ' Hab.'">0 Hab.</span>
+                            <span th:text="${inmueble.banos} + ' Baños'">0 Baños</span>
+                            <span th:text="${(inmueble.area != null ? #numbers.formatDecimal(inmueble.area, 1, 0, 'POINT') : '0') + ' m²'}">0 m²</span>
+                        </div>
+                        <p class="card-price">
+                            $<span th:text="${#numbers.formatDecimal(inmueble.precio, 1, 0, 'POINT')}">0</span>
+                            <span th:if="${inmueble.operacion.name() == 'ARRIENDO'}">/mes</span>
+                        </p>
+                        <div class="card-buttons">
+                            <a th:href="@{'/planos/visor3d/' + ${inmueble.id}}" class="btn-plano">Ver Plano 2D/3D</a>
+                            <a th:href="@{/inmuebles/{id}(id=${inmueble.id})}" class="btn-contacto">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paginación -->
+            <div class="pagination" th:if="${totalPaginas > 1}">
+                <a th:if="${paginaActual > 1}"
+                   th:href="@{/inmuebles(tipo=${tipo}, ubicacion=${ubicacion}, operacion=${operacion}, precio_max=${precioMax}, habitaciones=${habitaciones}, pagina=${paginaActual - 1})}">Anterior</a>
+
+                <span th:each="i : ${#numbers.sequence(1, totalPaginas)}">
+                    <span th:if="${i == paginaActual}" class="active" th:text="${i}">1</span>
+                    <a th:unless="${i == paginaActual}"
+                       th:href="@{/inmuebles(tipo=${tipo}, ubicacion=${ubicacion}, operacion=${operacion}, precio_max=${precioMax}, habitaciones=${habitaciones}, pagina=${i})}"
+                       th:text="${i}">1</a>
+                </span>
+
+                <a th:if="${paginaActual < totalPaginas}"
+                   th:href="@{/inmuebles(tipo=${tipo}, ubicacion=${ubicacion}, operacion=${operacion}, precio_max=${precioMax}, habitaciones=${habitaciones}, pagina=${paginaActual + 1})}">Siguiente</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top: 60px;">
+        <div class="footer-bottom">
+            <p>&copy; <span th:text="${#calendars.format(#calendars.createNow(), 'yyyy')}">2026</span> InmoVision 3D. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
