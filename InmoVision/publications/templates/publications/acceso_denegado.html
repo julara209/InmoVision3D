@@ -1,0 +1,20 @@
+{% extends "publications/base.html" %}
+
+{% block titulo %}Acceso denegado - InmoVision 3D{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block cuerpo %}
+<div class="auth-container">
+    <div class="auth-box" style="text-align: center;">
+        <h2>Acceso denegado</h2>
+
+        {% if sin_rol %}
+            <p class="auth-sub">Tu cuenta todavía no tiene un rol asignado. Contacta a un administrador.</p>
+        {% else %}
+            <p class="auth-sub">No tienes permiso para ver esta página con tu rol actual.</p>
+        {% endif %}
+
+        <a class="btn btn-primary" href="{% url 'inicio' %}">Ir a mi panel</a>
+    </div>
+</div>
+{% endblock %}
